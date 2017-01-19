@@ -54,4 +54,9 @@ class MainController extends Controller
         return Response::json($contact);
 
     }
+
+    public function delete(Request $request){
+        Contact::destroy($request->input('id'));
+        return response(["status" => "ok"], 200);
+    }
 }

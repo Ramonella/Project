@@ -19,6 +19,8 @@ Route::get('getContact', 'MainController@getContact');
 
 Route::get('update', 'MainController@update');
 
+Route::get('delete', 'MainController@delete');
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');

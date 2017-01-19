@@ -27,6 +27,9 @@ $(document).ready(function () {
 	                  $('#modal-nuevo-user').modal('toggle');
 	                  $('<tr id="user"'+data.id+' data-name="'+data.first_name+'" class="rows"><td> <input type=\'button\' class =\'btn btn-info\' value=\'+\' id=\'btn-detalle\' name=\''+data.id+'\'/></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/>   <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
 
+	              },
+	              error: function(data){
+	              	console.log("error ");
 	              }
 
 	            });
@@ -94,8 +97,22 @@ $(document).ready(function () {
 
       });
 	$('#lista').on('click', "#btn-borrar", function(){
-		var id = $(this).attr("name");
-		id_act = id;
+		var id_contact = $(this).attr("name");
+	
+        $.ajax({
+        	type : "GET", 
+        	url : "delete", 
+        	data : { id : id_contact },
+        	success : function(data){
+        		$('#user'+id_contact).remove();
+        		
+        	},
+        	error : function(data){
+        		console.log("error");
+        	}
+
+        });
+        
 
 
     });
@@ -124,10 +141,29 @@ $(document).ready(function () {
 
 
     $('#lista').on('click', "#btn-detalle", function(){
-    	var id = $(this).attr("name");
-		
-          
+    	var id_contact = $(this).attr("name");
+    	$.ajax({
+			type : "GET",
+			url : "getContact",
+			data : {id : id_contact},
+			
+			success : function(data){
+				var obj = jQuery.parseJSON(data);
+				console.log(obj);
+				$('#txtGetFirstName').html(obj.first_name);
+				$('#txtGetLastName').html(obj.last_name);
+				$('#txtGetEmail').html(obj.email);
+				$('#txtGetPhone').html(obj.phone);
+				$('#txtGetCompany').html(obj.company);
+				$('#txtGetCreated').html(obj.created_at);
+				$('#txtGetUpdated').html(obj.updated_at);
+				$('#modal-ver-user').modal('toggle');  
 
+			}, 
+			error : function(data){
+				console.log("error");
+			}
+		});
     });
 
 
