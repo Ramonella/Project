@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Redirect;
 use Response;
+use View;
 
 class MainController extends Controller
 {
@@ -81,7 +82,9 @@ class MainController extends Controller
             $contact->image = $imagename;
             $contact->user_id = Auth::user()->id;
             $contact->save();
+
             
+
             return $contact->toJson();
             
         } else {
@@ -89,6 +92,15 @@ class MainController extends Controller
             return response(["resp" => "Sin imagen" ], 500);
         }
          
+    }
+    public function buscar(Request $request){
+        $id = Auth::user()->id;
+        $usuarios = Contact::where('user_id', $id)
+            ->where('first_name', 'like', '%' . $request->input('nombre') . '%')
+            ->get();
+        //'first_name', 'like', '%' . $request->input('nombre') . '%'
+        $html = View::make('table')->with("usuarios",$usuarios)->render();
+        return response(["content" => $html], 200);
     }
 
 }

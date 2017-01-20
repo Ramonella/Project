@@ -33,3 +33,5 @@ Route::get('/got', [
 
 
 Route::post('guardar', "MainController@guardar");
+
+Route::get('buscar', 'MainController@buscar');

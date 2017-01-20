@@ -198,8 +198,26 @@ $(document).ready(function () {
 	            	$('#txtInputCompany').val('');
 	            	$('#image').val('');
     });
-    $('#register input').keyup(function(){
-  		$(this).next().text($(this).val().length < 5 ? "Please fill" : "");
+    $('#search-box').keyup(function () {
+    	var busqueda = $(this).val();
+  		$('#display').text(busqueda);
+
+  		$.ajax({
+				type : "GET",
+				url : "buscar",
+				data : { nombre : busqueda },
+				dataType : 'json',
+	        	success: function(data){
+	        		$('#id_tbody').html(data.content);
+	        	
+	        	} ,
+	        	error: function(data){
+
+	        		console.log('error');
+	        	} 		
+
+
+  		});
 	});
 
 
