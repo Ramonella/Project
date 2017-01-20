@@ -7,11 +7,16 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Contact;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 use Redirect;
 use Response;
 
 class MainController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
      public function show()
     {
        if (Auth::check()) {
@@ -59,4 +64,32 @@ class MainController extends Controller
         Contact::destroy($request->input('id'));
         return response(["status" => "ok"], 200);
     }
+
+    public function guardar(Request $request){
+         if (Input::hasFile('image'))
+        {
+            $imagename = time();
+            $file = $request->file('image');
+            $file->move('images', $imagename);
+
+            $contact = new Contact();
+            $contact->first_name = $request->input('txtInputFirstName');
+            $contact->last_name = $request->input('txtInputLastName');
+            $contact->email = $request->input('txtInputEmail');
+            $contact->phone = $request->input('txtInputPhone');
+            $contact->company = $request->input('txtInputCompany');
+            $contact->image = $imagename;
+            $contact->user_id = Auth::user()->id;
+            $contact->save();
+            
+            return $contact->toJson();
+            
+        } else {
+
+            return response(["resp" => "Sin imagen" ], 500);
+        }
+         
+    }
+
 }
+

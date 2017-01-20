@@ -30,3 +30,6 @@ Route::get('/got', [
   'uses' => function () {
    echo "You are allowed to view this page!";
 }]);
+
+
+Route::post('guardar', "MainController@guardar");

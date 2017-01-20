@@ -1,53 +1,7 @@
 $(document).ready(function () {
 		  var id_act;
 		  var testEmail = /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
-	      $('#btn-ok').click(function(e){
-	      	
-			if (testEmail.test($('#txtInputEmail1').val())){
-				e.preventDefault();
 
-	            var formData = {
-	              first_name : $('#txtInputFirstName').val(),
-	              last_name : $('#txtInputLastName').val(),
-	              email : $('#txtInputEmail1').val(),
-	              phone : $('#txtInputPhone').val(),
-	              company : $('#txtInputCompany').val(),
-	              user_id :  $('#auth_id').val(),
-	              image : 'hola',
-	            }
-
-	            $.ajax({
-	              type : "GET",
-	              url : "add",
-	              data : formData, 
-	              dataType : 'json',
-	              success : function(data){
-	                  
-	                  
-	                  $('#modal-nuevo-user').modal('toggle');
-	                  $('<tr id="user"'+data.id+' data-name="'+data.first_name+'" class="rows"><td> <input type=\'button\' class =\'btn btn-info\' value=\'+\' id=\'btn-detalle\' name=\''+data.id+'\'/></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/>   <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
-
-	              },
-	              error: function(data){
-	              	console.log("error ");
-	              }
-
-	            });
-
-	            $('#txtInputFirstName').val('');
-	            $('#txtInputLastName').val('');
-	            $('#txtInputEmail1').val('');
-	            $('#txtInputPhone').val('');
-	            $('#txtInputCompany').val('');
-        	}
-			else{
-				alert('Por favor envie una dirección valida de correo');
-			}
-	      	
-
-            
-
-      });
 	   $('#btn-act').click(function(e){
 	      	
 			if (testEmail.test($('#txtUpEmail').val())){
@@ -142,6 +96,7 @@ $(document).ready(function () {
 
     $('#lista').on('click', "#btn-detalle", function(){
     	var id_contact = $(this).attr("name");
+
     	$.ajax({
 			type : "GET",
 			url : "getContact",
@@ -166,10 +121,86 @@ $(document).ready(function () {
 		});
     });
 
+     $("#formup").submit(function(e){
+     	e.preventDefault();
+     	if (testEmail.test($('#txtInputEmail1').val())){
+     		var fd = new FormData();
+    		var file_data = $('input[type="file"]')[0].files;
+    		for(var i = 0;i<file_data.length;i++){
+        		fd.append("image", file_data[i]);
+    		}
+    		var other_data = $('#formup').serializeArray();
+    		$.each(other_data,function(key,input){
+        		fd.append(input.name,input.value);
+    		});
+    		$.ajaxSetup({
+    			headers: {
+        			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    			}
+			});
+    		$.ajax({
+	        	url: 'guardar',
+	        	data: fd,
+	        	contentType: false,
+	        	processData: false,
+	        	type: 'POST',
+	        	success: function(datos){
+	        		var data = jQuery.parseJSON(datos);
+	            	$('#modal-nuevo-user').modal('toggle');
+
+	                $('<tr id="user"'+data.id+' data-name="'+data.first_name+'" class="rows"><td><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/>   <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
+	                $('#txtInputFirstName').val('');
+	            	$('#txtInputLastName').val('');
+	            	$('#txtInputEmail1').val('');
+	            	$('#txtInputPhone').val('');
+	            	$('#txtInputCompany').val('');
+	            	$('#image').val('');
+	        	
+	        	} ,
+	        	error: function(data){
+	        		$('#div-err').html('Por favor adjunte una imagen!');
+	        		$('#diverr').show();
+
+	        	} 
+    		});
+     	} else{
+     		$('#div-err').html('Por favor ingrese una dirección de correo valida');
+	        $('#diverr').show();
+
+     	}
 
 
+     });
+    $('#btn-carga').click(function(){
 
 
+            
+    });
+
+    $("#btn-modal-new").click(function(){
+    	$('#diverr').hide();
+    	
+    });
+
+    $("#close-up").click(function(){
+    		         $('#txtInputFirstName').val('');
+	            	$('#txtInputLastName').val('');
+	            	$('#txtInputEmail').val('');
+	            	$('#txtInputPhone').val('');
+	            	$('#txtInputCompany').val('');
+	            	$('#image').val('');
+    });
+    $("#close-down").click(function(){
+    		        $('#txtInputFirstName').val('');
+	            	$('#txtInputLastName').val('');
+	            	$('#txtInputEmail').val('');
+	            	$('#txtInputPhone').val('');
+	            	$('#txtInputCompany').val('');
+	            	$('#image').val('');
+    });
+    $('#register input').keyup(function(){
+  		$(this).next().text($(this).val().length < 5 ? "Please fill" : "");
+	});
 
 
 

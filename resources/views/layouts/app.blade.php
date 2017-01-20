@@ -12,7 +12,7 @@
 
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="css/style.css">
     <!-- Scripts -->
     <script>
         window.Laravel = <?php echo json_encode([
@@ -43,7 +43,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                        {{ config('app.name', 'LionMane Software') }}
                     </a>
                 </div>
 
@@ -85,9 +85,9 @@
             </div>
         </nav>
 
-        @yield('content')
+       @yield('content')
     </div>
-
+     
     <!-- Scripts -->
     <script src="/js/app.js"></script>
 </body>
