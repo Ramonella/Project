@@ -35,3 +35,7 @@ Route::get('/got', [
 Route::post('guardar', "MainController@guardar");
 
 Route::get('buscar', 'MainController@buscar');
+
+Route::post('subir_temp', 'MainController@subirTemp');
+
+Route::post('actualizar', 'MainController@actualizarContacto');

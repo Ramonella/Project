@@ -95,12 +95,66 @@ class MainController extends Controller
     }
     public function buscar(Request $request){
         $id = Auth::user()->id;
-        $usuarios = Contact::where('user_id', $id)
-            ->where('first_name', 'like', '%' . $request->input('nombre') . '%')
-            ->get();
-        //'first_name', 'like', '%' . $request->input('nombre') . '%'
+        $usuarios = Contact::where(function($query) use ($request){
+                        $query->where('first_name', 'like', '%' . $request->input('nombre') . '%')
+                        ->orWhere('last_name', 'like', '%' . $request->input('nombre') . '%')
+                        ->orWhere('email', 'like', '%' . $request->input('nombre') . '%')
+                        ->orWhere('company', 'like', '%' . $request->input('nombre') . '%')
+                        ->orWhere('phone', 'like', '%' . $request->input('nombre') . '%')
+                        ;
+                    })->where('user_id', $id)->get();
+
         $html = View::make('table')->with("usuarios",$usuarios)->render();
         return response(["content" => $html], 200);
+    }
+
+    public function subirTemp(Request $request){
+        if (Input::hasFile('image'))
+        {
+            $imagename = 'tmp';
+            $file = $request->file('image');
+            $file->move('images/tmp', $imagename);
+            return response(["image" => "ok"], 200);
+
+        } else {
+            return response(["image" => "ko"], 500);
+        }
+
+    }
+    public function actualizarContacto(Request $request){
+        $contact = Contact::find($request->input('id'));
+        if(Input::hasFile('image')){
+            
+            $imagename = time();
+            $file = $request->file('image');
+            $file->move('images', $imagename);
+
+            $contact->first_name = $request->input('txtUpFirstName');
+            $contact->last_name = $request->input('txtUpLastName');
+            $contact->email = $request->input('txtUpEmail');
+            $contact->phone = $request->input('txtUpPhone');
+            $contact->company = $request->input('txtUpComany');
+            $contact->image = $imagename;
+            $contact->save();
+
+            $contact = Contact::find($request->input('id'));
+
+            return Response::json($contact);
+
+        } else {
+            //Actualizar sin imagen
+            $contact->first_name = $request->input('txtUpFirstName');
+            $contact->last_name = $request->input('txtUpLastName');
+            $contact->email = $request->input('txtUpEmail');
+            $contact->phone = $request->input('txtUpPhone');
+            $contact->company = $request->input('txtUpComany');
+            $contact->save();
+
+            $contact = Contact::find($request->input('id'));
+
+            return Response::json($contact);
+
+        }
     }
 
 }

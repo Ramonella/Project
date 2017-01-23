@@ -20,20 +20,18 @@
                                 <form class="form-horizontal" role="form">
                                   <div class="form-group">
                                     <label for="filter">Filter by</label>
-                                    <select class="form-control">
-                                        <option value="0" selected>All Snippets</option>
-                                        <option value="1">Featured</option>
-                                        <option value="2">Most popular</option>
-                                        <option value="3">Top rated</option>
-                                        <option value="4">Most commented</option>
-                                    </select>
+
                                   </div>
                                   <div class="form-group">
-                                    <label for="contain">Author</label>
+                                    <label for="contain">First Name</label>
                                     <input class="form-control" type="text" />
                                   </div>
                                   <div class="form-group">
-                                    <label for="contain">Contains the words</label>
+                                    <label for="contain">Last Name</label>
+                                    <input class="form-control" type="text" />
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="contain">Email</label>
                                     <input class="form-control" type="text" />
                                   </div>
                                   <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
@@ -77,7 +75,7 @@
                     </tr>
                     </thead>
                     <tbody id="id_tbody">
-                        @include('table', ['usuarios' => $usuarios]);
+                        @include('table', ['usuarios' => $usuarios])
                     </tbody>
                       
                      
@@ -150,38 +148,50 @@
                         <!-- Modal content-->
                         <div class="modal-content">
                           <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <button type="button" class="close" data-dismiss="modal" id="close-up-update">&times;</button>
                             <h4 class="modal-title">Actualizar usuario</h4>
                           </div>
                           <div class="modal-body">
-                                      <form>
+                                      <form id="formupdate" enctype="multipart/form-data" method="POST">
                                       <div class="form-group">
                                         <label for="txtUpFirstName">First Name</label>
-                                        <input type="text" class="form-control" id="txtUpFirstName" >
+                                        <input type="text" class="form-control" id="txtUpFirstName" name = "txtUpFirstName">
                                       </div>
                                       <div class="form-group">
                                         <label for="txtUpLastName">Last Name</label>
-                                        <input type="text" class="form-control" id="txtUpLastName" >
+                                        <input type="text" class="form-control" id="txtUpLastName" name = "txtUpLastName">
                                       </div>
                                       <div class="form-group">
                                         <label for="txtUpEmail">Email address</label>
-                                        <input type="email" class="form-control" id="txtUpEmail">
+                                        <input type="email" class="form-control" id="txtUpEmail" name = "txtUpEmail">
                                       </div>
                                       <div class="form-group">
                                         <label for="txtInputPhone1">Phone</label>
-                                        <input type="text" class="form-control" id="txtInputPhone1" placeholder="Phone">
+                                        <input type="text" class="form-control" id="txtInputPhone1" name = "txtUpPhone">
                                       </div>
                                       <div class="form-group">
                                         <label for="txtUpCompany">Company</label>
-                                        <input type="text" class="form-control" id="txtUpCompany">
+                                        <input type="text" class="form-control" id="txtUpCompany" name = "txtUpCompany">
                                       </div>
-                                      
+                                      <div class="form-group">
+                                        <img src="" class="img-responsive voc_list_preview_img" alt="" title="" id="imgUp">
+                                      </div>
+                                      <div class="form-group">
+                                        <input type="file" name="image" id = "imageUp" multiple>
+                                      </div>
+
+                                      <div class="form-group">
+                                        <div class="alert alert-danger" id="diverr">
+                                            <strong id="strerr">Error!</strong> <div id="div-err"></div>
+                                        </div>     
+
+                                      </div>
 
                                       <button type="submit" class="btn btn-default" id="btn-act">OK</button>
                                     </form>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal" id="close-down-update">Close</button>
                           </div>
                         </div>
 

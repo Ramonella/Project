@@ -4,7 +4,7 @@ $(document).ready(function () {
 
 	   $('#btn-act').click(function(e){
 	      	
-			if (testEmail.test($('#txtUpEmail').val())){
+			/*if (testEmail.test($('#txtUpEmail').val())){
 				e.preventDefault();
 
 	            var formData = {
@@ -46,7 +46,7 @@ $(document).ready(function () {
 				alert('Por favor envie una dirección valida de correo');
 			}
 	      	
-
+			*/
             
 
       });
@@ -85,6 +85,7 @@ $(document).ready(function () {
 				$('#txtUpEmail').val(obj.email);
 				$('#txtInputPhone1').val(obj.phone);
 				$('#txtUpCompany').val(obj.company);
+				$('#imgUp').attr('src','images/'+obj.image);
 				$('#modal-up-user').modal('toggle'); 
 
 	        }
@@ -123,59 +124,83 @@ $(document).ready(function () {
 
      $("#formup").submit(function(e){
      	e.preventDefault();
-     	if (testEmail.test($('#txtInputEmail1').val())){
-     		var fd = new FormData();
-    		var file_data = $('input[type="file"]')[0].files;
-    		for(var i = 0;i<file_data.length;i++){
-        		fd.append("image", file_data[i]);
+     	var fd = new FormData();
+    	var file_data = $('input[type="file"]')[0].files;
+    	for(var i = 0;i<file_data.length;i++){
+        	fd.append("image", file_data[i]);
+    	}
+    	var other_data = $('#formup').serializeArray();
+    	$.each(other_data,function(key,input){
+        	fd.append(input.name,input.value);
+    	});
+    	$.ajaxSetup({
+    		headers: {
+        		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     		}
-    		var other_data = $('#formup').serializeArray();
-    		$.each(other_data,function(key,input){
-        		fd.append(input.name,input.value);
-    		});
-    		$.ajaxSetup({
-    			headers: {
-        			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    			}
-			});
-    		$.ajax({
-	        	url: 'guardar',
-	        	data: fd,
-	        	contentType: false,
-	        	processData: false,
-	        	type: 'POST',
-	        	success: function(datos){
-	        		var data = jQuery.parseJSON(datos);
-	            	$('#modal-nuevo-user').modal('toggle');
-
-	                $('<tr id="user"'+data.id+' data-name="'+data.first_name+'" class="rows"><td><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/>   <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
-	                $('#txtInputFirstName').val('');
-	            	$('#txtInputLastName').val('');
-	            	$('#txtInputEmail1').val('');
-	            	$('#txtInputPhone').val('');
-	            	$('#txtInputCompany').val('');
-	            	$('#image').val('');
-	        	
-	        	} ,
-	        	error: function(data){
-	        		$('#div-err').html('Por favor adjunte una imagen!');
-	        		$('#diverr').show();
-
-	        	} 
-    		});
-     	} else{
-     		$('#div-err').html('Por favor ingrese una dirección de correo valida');
-	        $('#diverr').show();
-
-     	}
-
+		});
+    	$.ajax({
+	       	url: 'guardar',
+	       	data: fd,
+	       	contentType: false,
+	       	processData: false,
+	       	type: 'POST',
+	       	success: function(datos){
+	       		var data = jQuery.parseJSON(datos);
+	           	$('#modal-nuevo-user').modal('toggle');
+                $('<tr id="user"'+data.id+' data-name="'+data.first_name+'" class="rows"><td><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/>   <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
+                $('#txtInputFirstName').val('');
+            	$('#txtInputLastName').val('');
+            	$('#txtInputEmail1').val('');
+            	$('#txtInputPhone').val('');
+            	$('#txtInputCompany').val('');
+            	$('#image').val('');
+      	
+        	} ,
+        	error: function(data){
+        		$('#div-err').html('Por favor adjunte una imagen!');
+        		$('#diverr').show();
+	        } 
+    	});
+ 
 
      });
-    $('#btn-carga').click(function(){
+     $('#formupdate').submit(function(e){
 
+		e.preventDefault();
+     	var fd = new FormData();
+    	var file_data = $('#imageUp')[0].files;
+    	for(var i = 0;i<file_data.length;i++){
+        	fd.append("image", file_data[i]);
+    	}
+    	var other_data = $('#formupdate').serializeArray();
+    	$.each(other_data,function(key,input){
+        	fd.append(input.name,input.value);
+    	});
+    	
+    	fd.append('id', id_act);
 
-            
-    });
+    	$.ajaxSetup({
+    		headers: {
+        		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    		}
+		});
+
+    	$.ajax({
+	       	url: 'actualizar',
+	       	data: fd,
+	       	contentType: false,
+	       	processData: false,
+	       	type: 'POST',
+	       	success: function(datos){
+	       		console.log(datos);
+      	
+        	} ,
+        	error: function(data){
+        		console.log('Ocurrio un error');
+    		}
+    	});
+
+     });
 
     $("#btn-modal-new").click(function(){
     	$('#diverr').hide();
@@ -183,7 +208,7 @@ $(document).ready(function () {
     });
 
     $("#close-up").click(function(){
-    		         $('#txtInputFirstName').val('');
+    		        $('#txtInputFirstName').val('');
 	            	$('#txtInputLastName').val('');
 	            	$('#txtInputEmail').val('');
 	            	$('#txtInputPhone').val('');
@@ -198,11 +223,35 @@ $(document).ready(function () {
 	            	$('#txtInputCompany').val('');
 	            	$('#image').val('');
     });
+    $("#close-up-update").click(function(){
+    		        $('#txtUpFirstName').val('');
+	            	$('#txtUpLastName').val('');
+	            	$('#txtUpEmail').val('');
+	            	$('#txtInputPhone1').val('');
+	            	$('#txtUpCompany').val('');
+	            	$('#imageUp').val('');
+    });
+    $("#close-down-update").click(function(){
+    		        $('#txtUpFirstName').val('');
+	            	$('#txtUpLastName').val('');
+	            	$('#txtUpEmail').val('');
+	            	$('#txtInputPhone1').val('');
+	            	$('#txtUpCompany').val('');
+	            	$('#imageUp').val('');
+    });
+    var delay = (function(){
+  		var timer = 0;
+  		return function(callback, ms){
+    	clearTimeout (timer);
+    	timer = setTimeout(callback, ms);
+  	};
+	})();
+
     $('#search-box').keyup(function () {
     	var busqueda = $(this).val();
-  		$('#display').text(busqueda);
-
-  		$.ajax({
+  		delay(function(){
+      		
+  			$.ajax({
 				type : "GET",
 				url : "buscar",
 				data : { nombre : busqueda },
@@ -214,10 +263,44 @@ $(document).ready(function () {
 	        	error: function(data){
 
 	        		console.log('error');
-	        	} 		
+	        	} 
 
+  			});
 
-  		});
+    	}, 1000 );
+	});
+
+	$('#imageUp').change(function(){
+		var fd = new FormData();
+    	var file_data = $('#imageUp')[0].files;
+    	for(var i = 0;i<file_data.length;i++){
+        	fd.append("image", file_data[i]);
+    	}
+    	var other_data = $('#formupload').serializeArray();
+    	$.each(other_data,function(key,input){
+        	fd.append(input.name,input.value);
+    	});
+    	$.ajaxSetup({
+    		headers: {
+        		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    		}
+		});
+    	$.ajax({
+	       	url: 'subir_temp',
+	       	data: fd,
+	       	contentType: false,
+	       	processData: false,
+	       	type: 'POST',
+	       	success: function(datos){
+	       		$('#imgUp').attr('src','images/tmp/tmp');
+        	
+        	} ,
+        	error: function(data){
+        		
+
+        	} 
+   		});
+
 	});
 
 
