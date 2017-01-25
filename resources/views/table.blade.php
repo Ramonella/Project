@@ -9,11 +9,17 @@
                             <td>{{$user->first_name}}</td>
                             <td>{{$user->last_name}}</td> 
                             <td>{{$user->email}}</td> 
-
+                            <td>
+                                
+                                <a href="javascript:void(0)" class="country" name="{{$user->id}}" id="country" data-latlng="{{$user->latlng}}">{{$user->country_name}}</a>
+                                
+                            </td>
               
                             <td class="operaciones">
-                                        <input type='button' class ='btn btn-warning' value='Actualizar' id='btn-actualizar' name='{{$user->id}}'/>   
-                                        <input type='button' class ='btn btn-danger' value='Eliminar' id='btn-borrar' name='{{$user->id}}'/></td> 
+                                <input type='button' class ='btn btn-warning' value='Actualizar' id='btn-actualizar' name='{{$user->id}}'/> 
+                                <input type='button' class ='btn btn-danger' value='Eliminar' id='btn-borrar' name='{{$user->id}}'/>
+                            </td> 
+                            
                                         
                        
                         </tr>

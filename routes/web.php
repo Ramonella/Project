@@ -39,3 +39,7 @@ Route::get('buscar', 'MainController@buscar');
 Route::post('subir_temp', 'MainController@subirTemp');
 
 Route::post('actualizar', 'MainController@actualizarContacto');
+
+Route::get('getCountries', 'ApiController@getAllCountries');
+
+Route::get('/gmaps', ['as ' => 'gmaps', 'uses' => 'GmapsController@index']);

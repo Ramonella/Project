@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Input;
 use Redirect;
 use Response;
 use View;
+use Storage;
+
 
 class MainController extends Controller
 {
@@ -21,9 +23,18 @@ class MainController extends Controller
      public function show()
     {
        if (Auth::check()) {
+
             $id = Auth::user()->id;
             $data['usuarios'] = Contact::where('user_id', $id)->get();
             
+            $ch = curl_init(); 
+            curl_setopt($ch, CURLOPT_URL, "https://restcountries.eu/rest/v1/all"); 
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+            $output = curl_exec($ch); 
+            curl_close($ch); 
+            $data['countries'] = json_decode($output, true);
+            
+
             return view("home", $data);
        }else{
             return Redirect::to('login');
@@ -67,11 +78,21 @@ class MainController extends Controller
     }
 
     public function guardar(Request $request){
-         if (Input::hasFile('image'))
+        
+
+        
+        
+        if (Input::hasFile('image'))
         {
             $imagename = time();
             $file = $request->file('image');
             $file->move('images', $imagename);
+
+            $countycode = $request->input('slt-code');
+            $countryname = $request->input('slt-countryname');
+            $latlng_dump = $request->input('slt-latlng');
+
+            
 
             $contact = new Contact();
             $contact->first_name = $request->input('txtInputFirstName');
@@ -80,6 +101,9 @@ class MainController extends Controller
             $contact->phone = $request->input('txtInputPhone');
             $contact->company = $request->input('txtInputCompany');
             $contact->image = $imagename;
+            $contact->country_code = $countycode;
+            $contact->country_name = $countryname;
+            $contact->latlng = $latlng_dump;
             $contact->user_id = Auth::user()->id;
             $contact->save();
 
@@ -95,9 +119,17 @@ class MainController extends Controller
     }
     public function buscar(Request $request){
         $id = Auth::user()->id;
-        $usuarios = Contact::where(function($query) use ($request){
-                        $query->where('first_name', 'like', '%' . $request->input('nombre') . '%')
-                        ->orWhere('last_name', 'like', '%' . $request->input('nombre') . '%')
+        $searchValues = preg_split('/\s+/', $request->input('nombre'), -1, PREG_SPLIT_NO_EMPTY);
+        $usuarios = Contact::where(function($query) use ($request, $searchValues){
+                        $query
+                        ->where(function($q) use ($searchValues){
+                            foreach ($searchValues as $value) {
+                                $q 
+                                -> where('first_name', 'like', '%' . $value . '%')
+                                -> orWhere('last_name', 'like', '%' . $value . '%')
+                                ;
+                            }
+                        })
                         ->orWhere('email', 'like', '%' . $request->input('nombre') . '%')
                         ->orWhere('company', 'like', '%' . $request->input('nombre') . '%')
                         ->orWhere('phone', 'like', '%' . $request->input('nombre') . '%')
@@ -111,6 +143,7 @@ class MainController extends Controller
     public function subirTemp(Request $request){
         if (Input::hasFile('image'))
         {
+
             $imagename = 'tmp';
             $file = $request->file('image');
             $file->move('images/tmp', $imagename);
@@ -133,13 +166,13 @@ class MainController extends Controller
             $contact->last_name = $request->input('txtUpLastName');
             $contact->email = $request->input('txtUpEmail');
             $contact->phone = $request->input('txtUpPhone');
-            $contact->company = $request->input('txtUpComany');
+            $contact->company = $request->input('txtUpCompany');
             $contact->image = $imagename;
             $contact->save();
 
             $contact = Contact::find($request->input('id'));
 
-            return Response::json($contact);
+            return $contact->toJson();
 
         } else {
             //Actualizar sin imagen
@@ -147,12 +180,12 @@ class MainController extends Controller
             $contact->last_name = $request->input('txtUpLastName');
             $contact->email = $request->input('txtUpEmail');
             $contact->phone = $request->input('txtUpPhone');
-            $contact->company = $request->input('txtUpComany');
+            $contact->company = $request->input('txtUpCompany');
             $contact->save();
 
             $contact = Contact::find($request->input('id'));
 
-            return Response::json($contact);
+            return $contact->toJson();
 
         }
     }

@@ -21,6 +21,9 @@ class CreateContactsTable extends Migration
             $table->string('phone');
             $table->string('company');
             $table->string('image');
+            $table->integer('country_code');
+            $table->string('country_name');
+            $table->string('latlng');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();

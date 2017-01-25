@@ -3,6 +3,16 @@
 @section('content')
 <script type="text/javascript"  src = "js/crud_contact.js"></script>
 
+<script src='http://maps.googleapis.com/maps/api/js'></script>
+
+<style type="text/css">
+
+#map{
+  height: 300px;
+  width: 600px;  
+}
+
+</style>
 
 
 <div class="container">
@@ -14,31 +24,8 @@
                 <input type="text" class="form-control" id="search-box" placeholder="Search for contacts" />
                 <div class="input-group-btn">
                     <div class="btn-group" role="group">
-                        <div class="dropdown dropdown-lg">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
-                            <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                <form class="form-horizontal" role="form">
-                                  <div class="form-group">
-                                    <label for="filter">Filter by</label>
 
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="contain">First Name</label>
-                                    <input class="form-control" type="text" />
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="contain">Last Name</label>
-                                    <input class="form-control" type="text" />
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="contain">Email</label>
-                                    <input class="form-control" type="text" />
-                                  </div>
-                                  <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                                </form>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true" id="btn-buscar"></span></button>
                     </div>
                 </div>
             </div>
@@ -71,7 +58,8 @@
                         <th>First Name</th>
                         <th>Last Name</th> 
                         <th>Email Address</th> 
-                        <th>Operaciones</th>
+                        <th>Country</th> 
+                        <th>Options</th>
                     </tr>
                     </thead>
                     <tbody id="id_tbody">
@@ -114,7 +102,19 @@
                                         <label for="txtInputCompany">Company</label>
                                         <input type="text" class="form-control" id="txtInputCompany" name="txtInputCompany" placeholder="Company">
                                       </div>
-                                      
+                                      <div class="form-group">
+                                        <label for="sel1">Select country (select one):</label>
+                                          <select class="form-control" id="sel1" name="slt">
+                                            @foreach($countries as $country)
+                                                                                             
+                                                  
+                                              <option data-code ="{{$country['numericCode']}}" data-latlng="{{implode(',', $country['latlng'])}}"  data-countryname = {{$country['name']}}>
+                                              {{$country['name']}}
+                                              </option>
+                                            @endforeach
+                                          </select>
+                                      </div>
+
                                    
                                       <div class="form-group">
                                         <input type="file" name="image" id = "image" multiple>
@@ -246,7 +246,7 @@
                                             <tr>
                                             <div class="form-group">
                                               <td> 
-                                              <label for="txtGetCompany">Last Name: </label></td>
+                                              <label for="txtGetCompany">Company: </label></td>
                                               <td><span class="badge" id="txtGetCompany"></span>
                                               </td>
                                             </div>
@@ -289,4 +289,47 @@
     </div>
 </div>
 
+
+<div id="modalConfirmYesNo" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" 
+                class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 id="lblTitleConfirmYesNo" class="modal-title">Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <p id="lblMsgConfirmYesNo"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="btnYesConfirmYesNo" 
+                type="button" class="btn btn-primary">Yes</button>
+                <button id="btnNoConfirmYesNo" 
+                type="button" class="btn btn-default">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+      <div class="modal fade" id="contact" role="dialog" >
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" id="back" >  
+                    <div class="modal-header">
+                    <h4>Mapa<h4>
+                </div>
+                <div class="modal-body">    
+                    <div id="map"></div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-default" data-dismiss="modal">Close</a>
+                </div>      
+            </div>
+</div>
+
+
+
 @endsection
+
+
