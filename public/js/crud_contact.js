@@ -112,21 +112,27 @@ $(document).ready(function () {
 	       	processData: false,
 	       	type: 'POST',
 	       	success: function(datos){
+	       		if(!datos.resp){
+                    var data = jQuery.parseJSON(datos);
+                    $('#modal-nuevo-user').modal('toggle');
+                    $('<tr id="user"'+data.id+' data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/>   <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
+                    $('#txtInputFirstName').val('');
+                    $('#txtInputLastName').val('');
+                    $('#txtInputEmail1').val('');
+                    $('#txtInputPhone').val('');
+                    $('#txtInputCompany').val('');
+                    $('#image').val('');
+                } else {
+
+                    $('#div-err').html(datos.resp);
+                    $('#diverr').show();
+                }
 	       		
-	       		var data = jQuery.parseJSON(datos);
-	           	$('#modal-nuevo-user').modal('toggle');
-                $('<tr id="user"'+data.id+' data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/>   <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
-                $('#txtInputFirstName').val('');
-            	$('#txtInputLastName').val('');
-            	$('#txtInputEmail1').val('');
-            	$('#txtInputPhone').val('');
-            	$('#txtInputCompany').val('');
-            	$('#image').val('');
       	
         	} ,
         	error: function(data){
-        		$('#div-err').html('Por favor adjunte una imagen!');
-        		$('#diverr').show();
+        		console.log('error');
+                
 	        } 
     	});
  
@@ -331,5 +337,144 @@ $(document).ready(function () {
 
     });
 
+    var socket = io.connect('http://127.0.0.1:3000');
+
+    $('#lista').on('click', '.btn.btn-info.btn-chat', function(e){
+        e.preventDefault();
+        var name = $(this).attr('name');
+
+        var array = name.split('-');
+
+        var auth = parseInt($(this).data('auth'));
+
+        var email = $(this).data('email');
+
+        var receiver = 0;
+
+        var room = 'room';
+        $.ajax({
+            url: 'getUserId',
+            data: { email : email },
+            async : false,
+            type: 'GET',
+            success: function(data){
+                
+                receiver = parseInt(data);
+                console.log(receiver);
+            } ,
+            error: function(data){
+                console.log("Error");
+            } 
+        });
+
+         if(auth > receiver){
+            room += String(receiver)+'_'+String(auth);
+        } else{
+            room += String(auth)+'_'+String(receiver);
+        }
+        var html = '<li class="dropdown">'
+                  +'<a href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span>'+array[1]+'</a>'
+                  +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; border-color: #8e44ad">'
+                  +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0 10px"> Header </div>'
+                  + '<div>'
+                  + '<ul style="overflow: auto; height : 320px" id="'+room+'" class="messages_list">'
+                  + '</ul>'
+                  + '</div>'
+                  + '<div class="portlet-footer" >'
+                  + '             <form class="conversation-chat">'
+                  + '<input type="hidden" name="room" value="'+room+'">'
+                  + '                 <div class="form-group">'
+                  + '                   <textarea class="form-control" placeholder="Enter message..." name="message"></textarea>'
+                  + '                </div>'
+                  + '                <div class="form-group">'
+                  + '                    <input type="submit" class="btn btn-default pull-right" value="Send">'
+                  + '                     <div class="clearfix"></div>'
+                  + '                  </div>'
+                  + '              </form>'
+                  + '</div>'
+                  + '</div>'
+                  + '</li>';
+
+        
+
+       $("#chat").append(html);
+
+       socket.emit('room', room);
+    
+
+    });
+    
+
+    socket.on('message', function(data) {
+        console.log(data.message, data.room);
+         $("#"+data.room).append('<li data-time="'+data.time+'" data-user="'+data.user+'" data-message="'+data.message+'">'+ data.time + ' ' +data.user + ' says: '+data.message+'</li>');
+    });
+
+
+    $('#chat').on('submit', '.conversation-chat', function(e){
+                e.preventDefault();
+                var room = $(this).find('input[name="room"]').val();
+                var message = $(this).find('textarea[name="message"]').val();
+                var user_name = $('#user_name').val();
+                var dt = new Date();
+                var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+                socket.emit('send.message', {
+                    room : room,
+                    message : message,
+                    user : user_name,
+                    time : time
+                });
+                
+    });
+
+    $("#send_messages").click(function(){
+        console.log("Sent messages!");
+        var jsonObj = {};
+
+        $(".messages_list").each(function(){
+            var room = $(this).attr('id'); 
+            var roomJson = {};
+            roomJson[room] = {};
+            
+            $(this).find('li').each(function(){
+                //console.log($(this).data('time'), ' ', room);
+                var time = $(this).data('time');
+                var user = $(this).data('user');
+                var message = $(this).data('message');
+                var messageJson = {};
+                var timestamp = {};
+                messageJson["message"] = message;
+                messageJson["user"] = user;
+                timestamp[time] = messageJson;
+                $.extend(roomJson[room], timestamp);          
+                
+            });
+            $.extend(jsonObj, roomJson);
+              
+        });
+        //Here it sends the json!
+        var json = JSON.stringify(jsonObj);
+        //console.log(json);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        }); 
+        $.ajax({
+            url : 'setMessages',
+            type : 'POST',
+            data :  {datos : json},
+            
+            success : function(data){
+
+                console.log(data);
+            }, 
+            error : function(data){
+
+            }
+        });
+    });
+    //Events that fire the storage of chats
+    
 
 });

@@ -43,3 +43,7 @@ Route::post('actualizar', 'MainController@actualizarContacto');
 Route::get('getCountries', 'ApiController@getAllCountries');
 
 Route::get('/gmaps', ['as ' => 'gmaps', 'uses' => 'GmapsController@index']);
+
+Route::get('getUserId', 'MainController@getUserId');
+
+Route::post('setMessages', 'ChatController@setMessages');

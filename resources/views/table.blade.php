@@ -14,6 +14,16 @@
                                 <a href="javascript:void(0)" class="country" name="{{$user->id}}" id="country" data-latlng="{{$user->latlng}}">{{$user->country_name}}</a>
                                 
                             </td>
+                            
+                            <td>
+                                @if(App\User::where('email' , $user->email)->get()->isEmpty())
+                                     <a href="#" class="btn btn-primary btn-invite"><span class="glyphicon glyphicon-plus"></span> Invite</a>
+                                @else
+                                    <a href="javascript:void(0)" class="btn btn-info btn-chat" name="{{$user->id}}-{{$user->first_name}}" data-auth = "{{ Auth::user()->id }}" data-email="{{$user->email}}"><span class="glyphicon glyphicon-envelope"></span> Chat!</a>
+                                @endif
+
+                                
+                            </td>
               
                             <td class="operaciones">
                                 <input type='button' class ='btn btn-warning' value='Actualizar' id='btn-actualizar' name='{{$user->id}}'/> 

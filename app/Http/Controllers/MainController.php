@@ -8,6 +8,7 @@ use App\User;
 use App\Contact;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Redis;
 use Redirect;
 use Response;
 use View;
@@ -22,11 +23,12 @@ class MainController extends Controller
     }
      public function show()
     {
+        
        if (Auth::check()) {
 
             $id = Auth::user()->id;
             $data['usuarios'] = Contact::where('user_id', $id)->get();
-            
+           
             $ch = curl_init(); 
             curl_setopt($ch, CURLOPT_URL, "https://restcountries.eu/rest/v1/all"); 
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
@@ -93,27 +95,29 @@ class MainController extends Controller
             $latlng_dump = $request->input('slt-latlng');
 
             
+            try{
+                $contact = new Contact();
+                $contact->first_name = $request->input('txtInputFirstName');
+                $contact->last_name = $request->input('txtInputLastName');
+                $contact->email = $request->input('txtInputEmail');
+                $contact->phone = $request->input('txtInputPhone');
+                $contact->company = $request->input('txtInputCompany');
+                $contact->image = $imagename;
+                $contact->country_code = $countycode;
+                $contact->country_name = $countryname;
+                $contact->latlng = $latlng_dump;
+                $contact->user_id = Auth::user()->id;
+                $contact->save();
+                return $contact->toJson();
 
-            $contact = new Contact();
-            $contact->first_name = $request->input('txtInputFirstName');
-            $contact->last_name = $request->input('txtInputLastName');
-            $contact->email = $request->input('txtInputEmail');
-            $contact->phone = $request->input('txtInputPhone');
-            $contact->company = $request->input('txtInputCompany');
-            $contact->image = $imagename;
-            $contact->country_code = $countycode;
-            $contact->country_name = $countryname;
-            $contact->latlng = $latlng_dump;
-            $contact->user_id = Auth::user()->id;
-            $contact->save();
-
+            } catch(\Illuminate\Database\QueryException $e){
+                return response(["resp" => "The email already associated to other contact!" ], 200);
+            }
             
-
-            return $contact->toJson();
             
         } else {
 
-            return response(["resp" => "Sin imagen" ], 500);
+            return response(["resp" => "Please attach image!" ], 200);
         }
          
     }
@@ -189,6 +193,13 @@ class MainController extends Controller
 
         }
     }
+    public function getUserId(Request $request){
+        $user = User::where('email', $request->input('email'))->get()->first();
+        
+        return $user->id;
+
+    }
+    
 
 }
 

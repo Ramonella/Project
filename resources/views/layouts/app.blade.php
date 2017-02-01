@@ -29,7 +29,7 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-default navbar-static-top">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-offset">
             <div class="container">
                 <div class="navbar-header">
 
@@ -43,8 +43,15 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'LionMane Software') }}
+                        MyContacts
                     </a>
+                     <a href="#" class="navbar-brand"><span class="glyphicon glyphicon-envelope"></span> Inbox</a>
+                     @if (!Auth::guest())
+                     <a href="#" class="navbar-brand" id="btn-modal-new" data-toggle="modal" data-target="#modal-nuevo-user"><span class="glyphicon glyphicon-user"></span> Add new contact</a>
+                     @endif
+
+                      
+                 
                 </div>
 
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
@@ -64,6 +71,7 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
+
 
                                 <ul class="dropdown-menu" role="menu">
                                     <li>
