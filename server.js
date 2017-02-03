@@ -26,7 +26,8 @@ io.sockets.on('connection', function(socket) {
 			room : data.room,
 			message : data.message,
 			user : data.user,
-            time : data.time
+            time : data.time,
+            user_id : data.user_id
 		});
 
     });

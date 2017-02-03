@@ -404,7 +404,7 @@ $(document).ready(function () {
                   +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; background-color:white; border-color: #8e44ad; padding-top:0px">'
                   +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ array[1] +' </div>'
                   + '<div>'
-                  + '<ul style="overflow: auto; height : 320px" id="'+room+'" class="messages_list">'
+                  + '<ul style="overflow: auto; height : 320px; padding : 0px;" id="'+room+'" class="messages_list">'
                   + '</ul>'
                   + '</div>'
                   + '<div class="portlet-footer" >'
@@ -426,10 +426,9 @@ $(document).ready(function () {
         if($("#" + room).length == 0) {
             //it doesn't exist
             $("#chat").append(html);
-
-
-            //Retrieve all chat
-    
+            var style = '';
+            var userOnChat = '';    
+        
             $.ajax({
                 url : 'getMessages',
                 data : { room : room },
@@ -439,7 +438,14 @@ $(document).ready(function () {
 
                     $.each(obj, function(index, value){
                         console.log(index, value.message );
-                        $("#"+room).append('<li data-time="'+index+'" data-user="'+value.user+'" data-message="'+value.message+'">'+ index + ' <b>' +value.user + ' says: </b>'+value.message+'</li>');
+                        if(auth==value.user_id){
+                            style = style_local;
+                            userOnChat = 'Me: ';
+                        } else {
+                            style = style_away;
+                            userOnChat = value.user + ' says: ';
+                        }
+                        $("#"+room).append('<div data-userid = "'+value.user_id+'" data-time="'+index+'" data-user="'+value.user+'" data-message="'+value.message+'" style="'+style+'">'+ index + ' <b>' + userOnChat + '</b>'+value.message+'</div>');
                     });
                 }, 
                 error : function(data){
@@ -459,25 +465,29 @@ $(document).ready(function () {
 
     });
     //function for save all chat
+    var style_away = 'background-color: silver;margin: 10px 30px 10px 9px;padding: 10px 10px 10px 10px;border-radius: 15px 10px; word-wrap: break-word;  border-bottom-left-radius: 1px;';
+    var style_local = 'background-color: cornflowerblue;margin: 10px 8px 10px 30px;padding: 10px 10px 10px 10px;border-radius: 15px 10px; word-wrap: break-word;  border-bottom-right-radius: 1px;';
+    
     function saveChat(roomId){
         var jsonObj = {};
 
         var room = $("#"+roomId).attr('id'); 
-
+        
         var roomJson = {};
         roomJson[room] = {};
           
-        $("#"+roomId).find('li').each(function(){
+        $("#"+roomId).find('div').each(function(){
         //console.log($(this).data('time'), ' ', room);
             var time = $(this).data('time');
             var user = $(this).data('user');
             var message = $(this).data('message');
-
-            console.log(time, user, message);
+            var userid = $(this).data('userid');
+           
             var messageJson = {};
             var timestamp = {};
             messageJson["message"] = message;
             messageJson["user"] = user;
+            messageJson["user_id"] = userid;
             timestamp[time] = messageJson;
             $.extend(roomJson[room], timestamp);          
                 
@@ -499,7 +509,7 @@ $(document).ready(function () {
             data :  {datos : json},
             
             success : function(data){
-
+                
                 console.log(data);
             }, 
             error : function(data){
@@ -509,26 +519,36 @@ $(document).ready(function () {
     }
 
     socket.on('message', function(data) {
-        console.log(data.message, data.room);
-        var auth = parseInt($(this).data('auth'));
-         $("#"+data.room).append('<li data-time="'+data.time+'" data-user="'+data.user+'" data-message="'+data.message+'">'+ data.time + ' ' +data.user + ' says: '+data.message+'</li>');
-         saveChat(data.room);
+        
+        var auth = $('#user_iden').val();
+        var style = '';
+        
+        var userOnChat = '';
          
-         if(auth ==data.user){
-
+         if(auth ==data.user_id){
+            style = style_local;
+            userOnChat = 'Me: ';
          }else{
-
+            style = style_away;
+            userOnChat = data.user + ' says: ';
             $("#"+data.room).parent().parent().parent().css('background-color', 'lightcoral');
          }
+         $("#"+data.room).append('<div data-userid = "'+data.user_id+'"" data-time="'+data.time+'" data-user="'+data.user+'" data-message="'+data.message+'" style = "'+style+'">'+ data.time + ' <b> ' +userOnChat + '</b>'+data.message+'</div>');
+         $("#"+data.room).animate({scrollTop: $("#"+data.room).prop("scrollHeight")}, 500);
+         saveChat(data.room);
+
     });
 
     $('#chat').on('click', '.a_chat', function(){
-        //console.log('hola');
+        console.log('hola');
+        var room = $(this).parent().find('.messages_list').attr('id');
+        $("#"+room).animate({scrollTop: $("#"+room).prop("scrollHeight")}, 500);
         $(this).parent().css('background-color', 'transparent');
     });
 
     $('#chat').on('submit', '.conversation-chat', function(e){
                 e.preventDefault();
+                var auth = $('#user_iden').val();
                 var room = $(this).find('input[name="room"]').val();
                 var message = $(this).find('textarea[name="message"]').val();
                 var user_name = $('#user_name').val();
@@ -538,66 +558,14 @@ $(document).ready(function () {
                     room : room,
                     message : message,
                     user : user_name,
-                    time : time
+                    time : time,
+                    user_id : auth
                 });
                 $(this).find('textarea[name="message"]').val('');
     });
 
 
-
-    $("#send_messages").click(function(){
-        console.log("Sent messages!");
-        var jsonObj = {};
-
-        $(".messages_list").each(function(){
-            var room = $(this).attr('id'); 
-            var roomJson = {};
-            roomJson[room] = {};
-            
-            $(this).find('li').each(function(){
-                //console.log($(this).data('time'), ' ', room);
-                var time = $(this).data('time');
-                var user = $(this).data('user');
-                var message = $(this).data('message');
-                var messageJson = {};
-                var timestamp = {};
-                messageJson["message"] = message;
-                messageJson["user"] = user;
-                timestamp[time] = messageJson;
-                $.extend(roomJson[room], timestamp);          
-                
-            });
-            $.extend(jsonObj, roomJson);
-              
-        });
-        //Here it sends the json!
-        var json = JSON.stringify(jsonObj);
-        //console.log(json);
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        }); 
-        $.ajax({
-            url : 'setMessages',
-            type : 'POST',
-            data :  {datos : json},
-            
-            success : function(data){
-
-                console.log(data);
-            }, 
-            error : function(data){
-
-            }
-        });
-    });
-    //Events that fire the storage of chats
-    $('#get_messages').click(function(){
-
-    });
-
-    
+   
 
     //Close 
     $('#chat').on('click', '.btn.btn-default.bnt_close_chat', function(){

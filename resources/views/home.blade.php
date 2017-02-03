@@ -17,6 +17,9 @@
 
 </style>
 <input type="hidden" id="user_name" value="{{ Auth::user()->name }}">
+<input type="hidden" id="user_iden" value="{{ Auth::user()->id }}">
+
+
 
 <div class="container-fluid scrollable" style="padding-top : 60px; padding-bottom: 30px">
 
