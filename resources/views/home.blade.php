@@ -36,7 +36,7 @@
               </div>
     
 <input type="button" id="send_messages" value="Send messages!">
-
+<input type="button" id="get_messages" value="Get messages!">
 
 
 
@@ -81,62 +81,9 @@
 
 <nav class="navbar navbar-default navbar-fixed-bottom" style="background-color: transparent;
    background: transparent;
-   border-color: transparent;">
+   border-color: transparent; padding-right:25px">
     <ul class="nav navbar-nav navbar-right" id="chat">
-        <li class="dropdown">
-        <a href="#" data-toggle="dropdown" ><span class="glyphicon glyphicon-user"></span>
-            Chat 1
-        </a>
-        <div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; border-color: #8e44ad">
-          <div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0 10px"> Header </div>
-          <div>
-            <ul style="overflow: auto; height : 320px">
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-               <li>HOla</li>
-            </ul>
-          </div>
-          
-          <div class="portlet-footer">
-                        <form role="form">
-                            <div class="form-group">
-                                <textarea class="form-control" placeholder="Enter message..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-default pull-right">Send</button>
-                                <div class="clearfix"></div>
-                            </div>
-                        </form>
-                    </div>
-        
-        </div>
-        </li>
 
-        <li class="dropdown">
-        <a href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span>Chat 2</a>
-
-        
-        </li>
         
     </ul>
 </nav>

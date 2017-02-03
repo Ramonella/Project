@@ -26,6 +26,10 @@ class ChatController extends Controller
         return "fin";
     }
     public function getMessages(Request $request){
-        return "null";
+        
+        $redis = Redis::connection();
+
+        $response = $redis->get($request->input('room'));
+        return $response;
     }
 }

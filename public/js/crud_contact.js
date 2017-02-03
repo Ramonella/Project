@@ -15,6 +15,7 @@ $(document).ready(function () {
 	        	url : "delete", 
 	        	data : { id : id_contact },
 	        	success : function(data){
+                    console.log(data);
 	        		$('#user'+id_contact).remove();
 	        		
 	        	},
@@ -81,7 +82,23 @@ $(document).ready(function () {
 		});
     });
 
-
+     function is_User(email){
+        var result = 0;
+        $.ajax({
+            url : 'isUser',
+            type : 'GET',
+            data : {email : email},
+            async : false,
+            success : function(data){
+                console.log(data);
+                result = data;
+            }, 
+            error : function(data){
+                console.log("Error");
+            }
+        });
+        return result;
+     }
      $("#formup").submit(function(e){
      	e.preventDefault();
      	var fd = new FormData();
@@ -115,7 +132,16 @@ $(document).ready(function () {
 	       		if(!datos.resp){
                     var data = jQuery.parseJSON(datos);
                     $('#modal-nuevo-user').modal('toggle');
-                    $('<tr id="user"'+data.id+' data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/>   <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
+                    var isUser = is_User(data.email);
+                    var btnChat = '';
+                    console.log(isUser);
+                    if(isUser == 1){
+                        btnChat = '<a href="#" class="btn btn-primary btn-invite"><span class="glyphicon glyphicon-plus"></span> Invite</a>';
+                    } else{
+                        btnChat = '<a href="javascript:void(0)" class="btn btn-info btn-chat" name="{{$user->id}}-{{$user->first_name}}" data-auth = "{{ Auth::user()->id }}" data-email="{{$user->email}}"><span class="glyphicon glyphicon-envelope"></span> Chat!</a>';
+                    }
+
+                    $('<tr id="user'+data.id+'" data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td>'+btnChat+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/> </td><td>  <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
                     $('#txtInputFirstName').val('');
                     $('#txtInputLastName').val('');
                     $('#txtInputEmail1').val('');
@@ -138,6 +164,7 @@ $(document).ready(function () {
  
 
      });
+     
      $('#formupdate').submit(function(e){
 
 		e.preventDefault();
@@ -372,10 +399,10 @@ $(document).ready(function () {
         } else{
             room += String(auth)+'_'+String(receiver);
         }
-        var html = '<li class="dropdown">'
-                  +'<a href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span>'+array[1]+'</a>'
-                  +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; border-color: #8e44ad">'
-                  +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0 10px"> Header </div>'
+        var html = '<li class="dropdown" style="display :inline-flex;">'
+                  +'<a href="javascript:void(0)" data-toggle="dropdown" class="a_chat"><span class="glyphicon glyphicon-user"></span>'+array[1]+' </a> <button type="button" class="btn btn-default bnt_close_chat"><span class="glyphicon glyphicon-remove"></span> </button>'
+                  +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; background-color:white; border-color: #8e44ad">'
+                  +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0 10px;" >'+ array[1] +' </div>'
                   + '<div>'
                   + '<ul style="overflow: auto; height : 320px" id="'+room+'" class="messages_list">'
                   + '</ul>'
@@ -383,22 +410,50 @@ $(document).ready(function () {
                   + '<div class="portlet-footer" >'
                   + '             <form class="conversation-chat">'
                   + '<input type="hidden" name="room" value="'+room+'">'
-                  + '                 <div class="form-group">'
-                  + '                   <textarea class="form-control" placeholder="Enter message..." name="message"></textarea>'
+                  + '                 <div>'
+                  + '                   <textarea class="form-control txtchat" placeholder="Enter message..." name="message"></textarea>'
                   + '                </div>'
-                  + '                <div class="form-group">'
+                  + '                <div>'
                   + '                    <input type="submit" class="btn btn-default pull-right" value="Send">'
-                  + '                     <div class="clearfix"></div>'
-                  + '                  </div>'
+                  
+                  + '                 </div>'
                   + '              </form>'
                   + '</div>'
                   + '</div>'
                   + '</li>';
 
         
+        if($("#" + room).length == 0) {
+            //it doesn't exist
+            $("#chat").append(html);
 
-       $("#chat").append(html);
 
+            //Retrieve all chat
+    
+            $.ajax({
+                url : 'getMessages',
+                data : { room : room },
+                type : 'GET',
+                success : function(data){
+                    var obj = jQuery.parseJSON(data);
+
+                    $.each(obj, function(index, value){
+                        console.log(index, value.message );
+                        $("#"+room).append('<li data-time="'+index+'" data-user="'+value.user+'" data-message="'+value.message+'">'+ index + ' <b>' +value.user + ' says: </b>'+value.message+'</li>');
+                    });
+                }, 
+                error : function(data){
+
+                }
+
+            });
+
+
+        }
+       
+
+
+       $('#'+room).dropdown('toggle');
        socket.emit('room', room);
     
 
@@ -407,9 +462,22 @@ $(document).ready(function () {
 
     socket.on('message', function(data) {
         console.log(data.message, data.room);
+        var auth = parseInt($(this).data('auth'));
          $("#"+data.room).append('<li data-time="'+data.time+'" data-user="'+data.user+'" data-message="'+data.message+'">'+ data.time + ' ' +data.user + ' says: '+data.message+'</li>');
+        
+         
+         if(auth ==data.user){
+
+         }else{
+
+            $("#"+data.room).parent().parent().parent().css('background-color', 'lightcoral');
+         }
     });
 
+    $('#chat').on('click', '.a_chat', function(){
+        //console.log('hola');
+        $(this).parent().css('background-color', 'transparent');
+    });
 
     $('#chat').on('submit', '.conversation-chat', function(e){
                 e.preventDefault();
@@ -424,8 +492,10 @@ $(document).ready(function () {
                     user : user_name,
                     time : time
                 });
-                
+                $(this).find('textarea[name="message"]').val('');
     });
+
+
 
     $("#send_messages").click(function(){
         console.log("Sent messages!");
@@ -475,6 +545,57 @@ $(document).ready(function () {
         });
     });
     //Events that fire the storage of chats
-    
+    $('#get_messages').click(function(){
 
+    });
+
+    //Close 
+    $('#chat').on('click', '.btn.btn-default.bnt_close_chat', function(){
+        console.log("Sent messages!");
+        var jsonObj = {};
+
+        $(".messages_list").each(function(){
+            var room = $(this).attr('id'); 
+            var roomJson = {};
+            roomJson[room] = {};
+            
+            $(this).find('li').each(function(){
+                //console.log($(this).data('time'), ' ', room);
+                var time = $(this).data('time');
+                var user = $(this).data('user');
+                var message = $(this).data('message');
+                var messageJson = {};
+                var timestamp = {};
+                messageJson["message"] = message;
+                messageJson["user"] = user;
+                timestamp[time] = messageJson;
+                $.extend(roomJson[room], timestamp);          
+                
+            });
+            $.extend(jsonObj, roomJson);
+              
+        });
+        //Here it sends the json!
+        var json = JSON.stringify(jsonObj);
+        //console.log(json);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        }); 
+        $.ajax({
+            url : 'setMessages',
+            type : 'POST',
+            data :  {datos : json},
+            
+            success : function(data){
+
+                console.log(data);
+            }, 
+            error : function(data){
+
+            }
+        });
+        $(this).parent().remove();
+    });
 });

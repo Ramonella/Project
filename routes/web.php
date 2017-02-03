@@ -10,6 +10,8 @@
 | to using a Closure or controller method. Build something great!
 |
 */
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', 'MainController@show');
 
@@ -47,3 +49,18 @@ Route::get('/gmaps', ['as ' => 'gmaps', 'uses' => 'GmapsController@index']);
 Route::get('getUserId', 'MainController@getUserId');
 
 Route::post('setMessages', 'ChatController@setMessages');
+
+Route::get('getMessages', 'ChatController@getMessages');
+
+Route::get('isUser', function(Request $request){
+	$email = $request->input('email');
+	if(App\User::where('email' , $email)->get()->isEmpty()){
+		
+		return 1;
+
+	} else{
+		return 0;
+	}
+
+});
+
