@@ -401,8 +401,8 @@ $(document).ready(function () {
         }
         var html = '<li class="dropdown" style="display :inline-flex;">'
                   +'<a href="javascript:void(0)" data-toggle="dropdown" class="a_chat"><span class="glyphicon glyphicon-user"></span>'+array[1]+' </a> <button type="button" class="btn btn-default bnt_close_chat"><span class="glyphicon glyphicon-remove"></span> </button>'
-                  +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; background-color:white; border-color: #8e44ad">'
-                  +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0 10px;" >'+ array[1] +' </div>'
+                  +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; background-color:white; border-color: #8e44ad; padding-top:0px">'
+                  +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ array[1] +' </div>'
                   + '<div>'
                   + '<ul style="overflow: auto; height : 320px" id="'+room+'" class="messages_list">'
                   + '</ul>'
@@ -410,7 +410,7 @@ $(document).ready(function () {
                   + '<div class="portlet-footer" >'
                   + '             <form class="conversation-chat">'
                   + '<input type="hidden" name="room" value="'+room+'">'
-                  + '                 <div>'
+                  + '                 <div style="padding-left : 10px; padding-right : 10px">'
                   + '                   <textarea class="form-control txtchat" placeholder="Enter message..." name="message"></textarea>'
                   + '                </div>'
                   + '                <div>'
@@ -458,13 +458,61 @@ $(document).ready(function () {
     
 
     });
-    
+    //function for save all chat
+    function saveChat(roomId){
+        var jsonObj = {};
+
+        var room = $("#"+roomId).attr('id'); 
+
+        var roomJson = {};
+        roomJson[room] = {};
+          
+        $("#"+roomId).find('li').each(function(){
+        //console.log($(this).data('time'), ' ', room);
+            var time = $(this).data('time');
+            var user = $(this).data('user');
+            var message = $(this).data('message');
+
+            console.log(time, user, message);
+            var messageJson = {};
+            var timestamp = {};
+            messageJson["message"] = message;
+            messageJson["user"] = user;
+            timestamp[time] = messageJson;
+            $.extend(roomJson[room], timestamp);          
+                
+        });
+        $.extend(jsonObj, roomJson);
+              
+        
+        //Here it sends the json!
+        var json = JSON.stringify(jsonObj);
+        //console.log(json);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        }); 
+        $.ajax({
+            url : 'setMessages',
+            type : 'POST',
+            data :  {datos : json},
+            
+            success : function(data){
+
+                console.log(data);
+            }, 
+            error : function(data){
+
+            }
+        });
+    }
 
     socket.on('message', function(data) {
         console.log(data.message, data.room);
         var auth = parseInt($(this).data('auth'));
          $("#"+data.room).append('<li data-time="'+data.time+'" data-user="'+data.user+'" data-message="'+data.message+'">'+ data.time + ' ' +data.user + ' says: '+data.message+'</li>');
-        
+         saveChat(data.room);
          
          if(auth ==data.user){
 
@@ -549,53 +597,11 @@ $(document).ready(function () {
 
     });
 
+    
+
     //Close 
     $('#chat').on('click', '.btn.btn-default.bnt_close_chat', function(){
-        console.log("Sent messages!");
-        var jsonObj = {};
 
-        $(".messages_list").each(function(){
-            var room = $(this).attr('id'); 
-            var roomJson = {};
-            roomJson[room] = {};
-            
-            $(this).find('li').each(function(){
-                //console.log($(this).data('time'), ' ', room);
-                var time = $(this).data('time');
-                var user = $(this).data('user');
-                var message = $(this).data('message');
-                var messageJson = {};
-                var timestamp = {};
-                messageJson["message"] = message;
-                messageJson["user"] = user;
-                timestamp[time] = messageJson;
-                $.extend(roomJson[room], timestamp);          
-                
-            });
-            $.extend(jsonObj, roomJson);
-              
-        });
-        //Here it sends the json!
-        var json = JSON.stringify(jsonObj);
-        //console.log(json);
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        }); 
-        $.ajax({
-            url : 'setMessages',
-            type : 'POST',
-            data :  {datos : json},
-            
-            success : function(data){
-
-                console.log(data);
-            }, 
-            error : function(data){
-
-            }
-        });
         $(this).parent().remove();
     });
 });

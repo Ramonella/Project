@@ -35,8 +35,7 @@
                 </div>
               </div>
     
-<input type="button" id="send_messages" value="Send messages!">
-<input type="button" id="get_messages" value="Get messages!">
+
 
 
 

@@ -28,6 +28,13 @@ class HomeController extends Controller
     {
         $id = Auth::user()->id;
         $data['usuarios'] = Contact::where('user_id', $id)->get();
+
+        $ch = curl_init(); 
+        curl_setopt($ch, CURLOPT_URL, "https://restcountries.eu/rest/v1/all"); 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+        $output = curl_exec($ch); 
+        curl_close($ch); 
+        $data['countries'] = json_decode($output, true);
         
         return view("home", $data);
         
