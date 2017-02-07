@@ -10,6 +10,7 @@ use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\File;
 use Redirect;
 use Response;
 use View;
@@ -30,11 +31,13 @@ class MainController extends Controller
             $id = Auth::user()->id;
             $data['usuarios'] = Contact::where('user_id', $id)->get();
            
-            $ch = curl_init(); 
+            /*$ch = curl_init(); 
             curl_setopt($ch, CURLOPT_URL, "https://restcountries.eu/rest/v1/all"); 
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
             $output = curl_exec($ch); 
-            curl_close($ch); 
+            curl_close($ch); */
+            $output = $this->readConuntries();
+            
             $data['countries'] = json_decode($output, true);
             $data['unseen_messages'] = ChatController::getUnseenMessages();
             return view("home", $data);
@@ -199,7 +202,10 @@ class MainController extends Controller
         return $user->id;
 
     }
-    
+    public function readConuntries(){
+
+        return File::get(storage_path('all.json'));
+    }
 
 }
 

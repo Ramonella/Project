@@ -9,8 +9,8 @@ $(document).ready(function () {
 	
         var $confirm = $("#modalConfirmYesNo");
     	$confirm.modal('show');
-    	$("#lblTitleConfirmYesNo").html("Confirmación");
-    	$("#lblMsgConfirmYesNo").html("¿Confirma que desea eliminar el contacto?, este proceso es irreversible");
+    	$("#lblTitleConfirmYesNo").html("Confirm");
+    	$("#lblMsgConfirmYesNo").html("Are you sure of remove this contact? This process is irreversible");
     	$("#btnYesConfirmYesNo").off('click').click(function () {
         	$confirm.modal("hide");
         	$.ajax({
@@ -137,14 +137,14 @@ $(document).ready(function () {
                     $('#modal-nuevo-user').modal('toggle');
                     var isUser = is_User(data.email);
                     var btnChat = '';
-                    console.log(isUser);
+                    
                     if(isUser == 1){
                         btnChat = '<a href="#" class="btn btn-primary btn-invite"><span class="glyphicon glyphicon-plus"></span> Invite</a>';
                     } else{
                         btnChat = '<a href="javascript:void(0)" class="btn btn-info btn-chat" name="{{$user->id}}-{{$user->first_name}}" data-auth = "{{ Auth::user()->id }}" data-email="{{$user->email}}"><span class="glyphicon glyphicon-envelope"></span> Chat!</a>';
                     }
 
-                    $('<tr id="user'+data.id+'" data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td>'+btnChat+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+data.id+'\'/> </td><td>  <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
+                    $('<tr id="user'+data.id+'" data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td>'+btnChat+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Update\' id=\'btn-actualizar\' name=\''+data.id+'\'/> </td><td>  <input type=\'button\' class =\'btn btn-danger\' value=\'Delete\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
                     $('#txtInputFirstName').val('');
                     $('#txtInputLastName').val('');
                     $('#txtInputEmail1').val('');
@@ -197,7 +197,15 @@ $(document).ready(function () {
 	       	type: 'POST',
 	       	success: function(datos){
 	       		var data = jQuery.parseJSON(datos);
-				$('#user'+id_act).replaceWith('<tr id="user'+id_act+'" data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Actualizar\' id=\'btn-actualizar\' name=\''+id_act+'\'/>   <input type=\'button\' class =\'btn btn-danger\' value=\'Eliminar\' id=\'btn-borrar\' name=\''+id_act+'\'/></td>   <tr>');
+                var isUser = is_User(data.email);
+                    var btnChat = '';
+                    
+                    if(isUser == 1){
+                        btnChat = '<a href="#" class="btn btn-primary btn-invite"><span class="glyphicon glyphicon-plus"></span> Invite</a>';
+                    } else{
+                        btnChat = '<a href="javascript:void(0)" class="btn btn-info btn-chat" name="{{$user->id}}-{{$user->first_name}}" data-auth = "{{ Auth::user()->id }}" data-email="{{$user->email}}"><span class="glyphicon glyphicon-envelope"></span> Chat!</a>';
+                    }
+				$('#user'+id_act).replaceWith('<tr id="user'+id_act+'" data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td>'+btnChat+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Update\' id=\'btn-actualizar\' name=\''+id_act+'\'/> </td><td>  <input type=\'button\' class =\'btn btn-danger\' value=\'Delete\' id=\'btn-borrar\' name=\''+id_act+'\'/></td>   <tr>');
                 alert("Usuario actualizado!");
                 $('#modal-up-user').modal('toggle');
 	       		console.log(datos);

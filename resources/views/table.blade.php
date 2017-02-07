@@ -27,10 +27,10 @@
                             </td>
               
                             <td class="operaciones">
-                                <input type='button' class ='btn btn-warning' value='Actualizar' id='btn-actualizar' name='{{$user->id}}'/> 
+                                <input type='button' class ='btn btn-warning' value='Update' id='btn-actualizar' name='{{$user->id}}'/> 
                             </td>
                             <td>
-                                <input type='button' class ='btn btn-danger' value='Eliminar' id='btn-borrar' name='{{$user->id}}'/>
+                                <input type='button' class ='btn btn-danger' value='Delete' id='btn-borrar' name='{{$user->id}}'/>
                             
                             </td>
                                         
