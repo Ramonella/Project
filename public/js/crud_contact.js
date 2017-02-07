@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var id_act;
-    var socket = io.connect('http://127.0.0.1:3000');
+    var socket = io.connect('http://173.255.202.198:3000');
 
     socket.emit('room_default', $('#user_iden').val());
 
