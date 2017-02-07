@@ -32,4 +32,8 @@ class ChatController extends Controller
         $response = $redis->get($request->input('room'));
         return $response;
     }
+    public static function getUnseenMessages(){
+        $redis = Redis::connection();
+        return 23;
+    }
 }

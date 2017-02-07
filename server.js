@@ -4,6 +4,7 @@ server = require('http').createServer(app),
 io = require('socket.io').listen(server);
 conversations = {};
 
+
 app.get('/', function(request, response){
 	
 	response.sendFile(__dirname+'/index.html');
@@ -17,6 +18,13 @@ io.sockets.on('connection', function(socket) {
     socket.on('room', function(room) {
         console.log('client on room ', room);
         socket.join(room);
+        
+    });
+
+    socket.on('room_default', function(room){
+        console.log('Client on default room ', room);
+        socket.join(room);
+
     });
 
     socket.on('send.message', function(data){
@@ -27,10 +35,27 @@ io.sockets.on('connection', function(socket) {
 			message : data.message,
 			user : data.user,
             time : data.time,
-            user_id : data.user_id
+            message_seen : data.message_seen,
+            user_id : data.user_id,
+            receiver : data.receiver
 		});
 
     });
+    socket.on('get.users', function(room){
+        var no_room = io.sockets.adapter.rooms[room];
+        io.sockets.in(room).emit('send.users', no_room.length);
+    });
+
+    socket.on('notify_user', function(data){
+        console.log('Notify user in room ', data.user, ' open room: ', data.room);
+        io.sockets.in(data.user).emit('new.message', {
+            room : data.room,
+            emitter : data.emitter,
+            emitter_name : data.emitter_name
+        });
+    });
+
+   
 });
 
 

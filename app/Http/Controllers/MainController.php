@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\User;
 use App\Contact;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redis;
@@ -35,8 +36,7 @@ class MainController extends Controller
             $output = curl_exec($ch); 
             curl_close($ch); 
             $data['countries'] = json_decode($output, true);
-            
-
+            $data['unseen_messages'] = ChatController::getUnseenMessages();
             return view("home", $data);
        }else{
             return Redirect::to('login');

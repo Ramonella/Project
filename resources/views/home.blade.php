@@ -3,9 +3,9 @@
 @section('content')
 <script type="text/javascript"  src = "js/crud_contact.js"></script>
 
-<script src='http://maps.googleapis.com/maps/api/js'></script>
+<script src='js/googlemaps.js'></script>
 
-<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script src="js/socket.io-1.4.5.js"></script>
 
 
 <style type="text/css">
@@ -18,7 +18,7 @@
 </style>
 <input type="hidden" id="user_name" value="{{ Auth::user()->name }}">
 <input type="hidden" id="user_iden" value="{{ Auth::user()->id }}">
-
+<input type="hidden" id="no_in_room" value="">
 
 
 <div class="container-fluid scrollable" style="padding-top : 60px; padding-bottom: 30px">
@@ -39,7 +39,7 @@
               </div>
     
 
-
+<input type="button" id="testA" value="testA">
 
 
 
@@ -93,13 +93,13 @@
 
 
 
-@include('modalnewuser');                  
+@include('modalnewuser')                  
   
 
-@include('modalupuser');
+@include('modalupuser')
 
 
-@include('modalveruser');
+@include('modalveruser')
 
 
 @include('modalsmapconfirm')

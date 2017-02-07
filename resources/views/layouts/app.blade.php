@@ -23,7 +23,7 @@
 
     <script src="js/jquery.min.js"></script>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="css/jquery-ui.css">
     <link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -45,8 +45,9 @@
                     <a class="navbar-brand" href="{{ url('/') }}">
                         MyContacts
                     </a>
-                     <a href="#" class="navbar-brand"><span class="glyphicon glyphicon-envelope"></span> Inbox</a>
-                     @if (!Auth::guest())
+                    @if (!Auth::guest())
+                     <a href="#" class="navbar-brand"><span class="glyphicon glyphicon-envelope"></span> Inbox <span class="label label-danger" style="display:inline;">0</span></a>
+                     
                      <a href="#" class="navbar-brand" id="btn-modal-new" data-toggle="modal" data-target="#modal-nuevo-user"><span class="glyphicon glyphicon-user"></span> Add new contact</a>
                      @endif
 

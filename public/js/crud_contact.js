@@ -1,5 +1,8 @@
 $(document).ready(function () {
     var id_act;
+    var socket = io.connect('http://127.0.0.1:3000');
+
+    socket.emit('room_default', $('#user_iden').val());
 
 	$('#lista').on('click', ".btn.btn-danger", function(){
 		var id_contact = $(this).attr("name");
@@ -364,7 +367,7 @@ $(document).ready(function () {
 
     });
 
-    var socket = io.connect('http://127.0.0.1:3000');
+    
 
     $('#lista').on('click', '.btn.btn-info.btn-chat', function(e){
         e.preventDefault();
@@ -400,7 +403,7 @@ $(document).ready(function () {
             room += String(auth)+'_'+String(receiver);
         }
         var html = '<li class="dropdown" style="display :inline-flex;">'
-                  +'<a href="javascript:void(0)" data-toggle="dropdown" class="a_chat"><span class="glyphicon glyphicon-user"></span>'+array[1]+' </a> <button type="button" class="btn btn-default bnt_close_chat"><span class="glyphicon glyphicon-remove"></span> </button>'
+                  +'<a href="javascript:void(0)" data-toggle="dropdown" class="a_chat" id="a_'+room+'"><span class="glyphicon glyphicon-user"></span>'+array[1]+' </a> <button type="button" class="btn btn-default bnt_close_chat" data-room="'+room+'"><span class="glyphicon glyphicon-remove"></span> </button>'
                   +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; background-color:white; border-color: #8e44ad; padding-top:0px">'
                   +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ array[1] +' </div>'
                   + '<div>'
@@ -409,6 +412,7 @@ $(document).ready(function () {
                   + '</div>'
                   + '<div class="portlet-footer" >'
                   + '             <form class="conversation-chat">'
+                  + '<input type="hidden" name="receiver" value="'+receiver+'">'
                   + '<input type="hidden" name="room" value="'+room+'">'
                   + '                 <div style="padding-left : 10px; padding-right : 10px">'
                   + '                   <textarea class="form-control txtchat" placeholder="Enter message..." name="message"></textarea>'
@@ -459,7 +463,7 @@ $(document).ready(function () {
        
 
 
-       $('#'+room).dropdown('toggle');
+       
        socket.emit('room', room);
     
 
@@ -517,33 +521,127 @@ $(document).ready(function () {
             }
         });
     }
+    socket.on('new.message', function(data){
+        var room = data.room;
+        var receiver = data.emitter;
+        var auth = $('#user_iden').val();
+        var html = '<li class="dropdown" style="display :inline-flex;">'
+                 +'<a href="javascript:void(0)" data-toggle="dropdown" class="a_chat" id="a_'+room+'"><span class="glyphicon glyphicon-user"></span>'+data.emitter_name+' </a> <button type="button" class="btn btn-default bnt_close_chat" data-room="'+room+'"><span class="glyphicon glyphicon-remove"></span> </button>'
+                 +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; background-color:white; border-color: #8e44ad; padding-top:0px">'
+                 +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ data.emitter_name +' </div>'
+                 + '<div>'
+                 + '<ul style="overflow: auto; height : 320px; padding : 0px;" id="'+room+'" class="messages_list">'
+                 + '</ul>'
+                 + '</div>'
+                 + '<div class="portlet-footer" >'
+                 + '             <form class="conversation-chat">'
+                 + '<input type="hidden" name="receiver" value="'+receiver+'">'
+                 + '<input type="hidden" name="room" value="'+room+'">'
+                 + '                 <div style="padding-left : 10px; padding-right : 10px">'
+                 + '                   <textarea class="form-control txtchat" placeholder="Enter message..." name="message"></textarea>'
+                 + '                </div>'
+                 + '                <div>'
+                 + '                    <input type="submit" class="btn btn-default pull-right" value="Send">'
+                 
+                 + '                 </div>'
+                 + '              </form>'
+                 + '</div>'
+                 + '</div>'
+                 + '</li>';
 
-    socket.on('message', function(data) {
         
+        if($("#" + room).length == 0) {
+            //it doesn't exist
+            $("#chat").append(html);
+            var style = '';
+            var userOnChat = '';    
+        
+            $.ajax({
+                url : 'getMessages',
+                data : { room : room },
+                type : 'GET',
+                success : function(data){
+                    var obj = jQuery.parseJSON(data);
+
+                    $.each(obj, function(index, value){
+                        console.log(index, value.message );
+                        if(auth==value.user_id){
+                            style = style_local;
+                            userOnChat = 'Me: ';
+                        } else {
+                            style = style_away;
+                            userOnChat = value.user + ' says: ';
+                        }
+                        $("#"+room).append('<div data-userid = "'+value.user_id+'" data-time="'+index+'" data-user="'+value.user+'" data-message="'+value.message+'" style="'+style+'">'+ index + ' <b>' + userOnChat + '</b>'+value.message+'</div>');
+                    });
+                }, 
+                error : function(data){
+
+                }
+
+            });
+
+
+        }
+       
+       $("#"+room).parent().parent().parent().css('background-color', 'lightcoral');
+
+       
+       socket.emit('room', room);
+    });
+    socket.on('message', function(data) {
+        var isVisible = $( "#"+data.room ).is( ":visible" );
         var auth = $('#user_iden').val();
         var style = '';
         
         var userOnChat = '';
-         
+        var receiver = data.receiver;
+        var to_room = data.room;
+        var user_name = data.user;
          if(auth ==data.user_id){
             style = style_local;
             userOnChat = 'Me: ';
+            socket.emit('get.users', data.room);
+            socket.on('send.users', function(data){
+                console.log(data);
+                if(data = 1){
+                    console.log('Esta solo');
+                    socket.emit('notify_user', {
+                        user : receiver,
+                        room : to_room, 
+                        emitter : auth,
+                        emitter_name : user_name
+                    });
+                }
+               
+            });
+            
          }else{
             style = style_away;
             userOnChat = data.user + ' says: ';
-            $("#"+data.room).parent().parent().parent().css('background-color', 'lightcoral');
+            if(!isVisible){
+                $("#"+data.room).parent().parent().parent().css('background-color', 'lightcoral');
+            }
+            //Here it notifies to the away user on inbox
          }
          $("#"+data.room).append('<div data-userid = "'+data.user_id+'"" data-time="'+data.time+'" data-user="'+data.user+'" data-message="'+data.message+'" style = "'+style+'">'+ data.time + ' <b> ' +userOnChat + '</b>'+data.message+'</div>');
          $("#"+data.room).animate({scrollTop: $("#"+data.room).prop("scrollHeight")}, 500);
          saveChat(data.room);
+         
 
     });
+    
 
     $('#chat').on('click', '.a_chat', function(){
-        console.log('hola');
+        
         var room = $(this).parent().find('.messages_list').attr('id');
-        $("#"+room).animate({scrollTop: $("#"+room).prop("scrollHeight")}, 500);
+        
         $(this).parent().css('background-color', 'transparent');
+        delay(function(){
+          
+            $("#"+room).animate({scrollTop: $("#"+room).prop("scrollHeight")}, 50);
+        }, 100);
+
     });
 
     $('#chat').on('submit', '.conversation-chat', function(e){
@@ -552,6 +650,8 @@ $(document).ready(function () {
                 var room = $(this).find('input[name="room"]').val();
                 var message = $(this).find('textarea[name="message"]').val();
                 var user_name = $('#user_name').val();
+                var receiver = $(this).find('input[name="receiver"]').val();
+
                 var dt = new Date();
                 var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
                 socket.emit('send.message', {
@@ -559,7 +659,8 @@ $(document).ready(function () {
                     message : message,
                     user : user_name,
                     time : time,
-                    user_id : auth
+                    user_id : auth,
+                    receiver : receiver
                 });
                 $(this).find('textarea[name="message"]').val('');
     });
@@ -569,7 +670,35 @@ $(document).ready(function () {
 
     //Close 
     $('#chat').on('click', '.btn.btn-default.bnt_close_chat', function(){
-
+        
         $(this).parent().remove();
     });
+
+    $('#chat').on('keyup', '.form-control.txtchat', function(e){
+        var code = e.which; 
+        
+        if(code==13){
+            e.preventDefault();
+            //Here it sends the message!
+            var auth = $('#user_iden').val();
+            var room = $(this).parent().parent().find('input[name="room"]').val();
+            var message = $(this).val();
+            var user_name = $('#user_name').val();
+            var receiver = $(this).parent().parent().find('input[name="receiver"]').val();
+            var dt = new Date();
+            var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+            socket.emit('send.message', {
+                    room : room,
+                    message : message,
+                    user : user_name,
+                    time : time,
+                    user_id : auth,
+                    receiver : receiver
+            });
+            $(this).val('');
+        } 
+    });
+
+    
+
 });
