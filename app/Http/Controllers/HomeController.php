@@ -7,6 +7,7 @@ use App\User;
 use App\Contact;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ChatController;
+use Illuminate\Support\Facades\File;
 
 class HomeController extends Controller
 {
