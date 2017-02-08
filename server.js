@@ -55,6 +55,12 @@ io.sockets.on('connection', function(socket) {
         });
     });
 
+    socket.on('clear.chat', function(room){
+        console.log('Clear chat ', room);
+        io.sockets.in(room).emit('delete.chat', {
+            room : room
+        });
+    });
    
 });
 

@@ -64,3 +64,5 @@ Route::get('isUser', function(Request $request){
 
 });
 
+Route::get('clearChat', 'ChatController@clearChat');
+

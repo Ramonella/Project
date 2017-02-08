@@ -33,7 +33,14 @@ class ChatController extends Controller
         return $response;
     }
     public static function getUnseenMessages(){
-        $redis = Redis::connection();
+        //TODO
         return 23;
+    }
+    public function clearChat(Request $request){
+        $key = $request->input('room');
+        $redis = Redis::connection();
+        $redis->del($key);
+        return response(["status" => "ok"], 200);
+
     }
 }

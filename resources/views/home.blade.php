@@ -54,13 +54,14 @@
                     <table class="table table-hover table-striped" id="lista">
                     <thead>
                       <tr>
-                        <th>Image</th>
+                        <th class="head_image">Image</th>
                         <th>First Name</th>
-                        <th>Last Name</th> 
-                        <th>Email Address</th> 
-                        <th>Country</th>
-                        <th>Invite or chat</th> 
-                        <th>Options</th>
+                        <th class="head_lastname">Last Name</th> 
+                        <th class="head_email">Email Address</th> 
+                        <th class="head_country">Country</th>
+                        <th class="head_chat">Invite or chat</th> 
+                        <th class="head_update">Update</th>
+                        <th class="head_delete">Delete</th>
                     </tr>
                     </thead>
                     <tbody id="id_tbody">

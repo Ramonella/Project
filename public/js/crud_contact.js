@@ -145,7 +145,7 @@ $(document).ready(function () {
                         btnChat = '<a href="javascript:void(0)" class="btn btn-info btn-chat" name="'+data.id+'-'+data.first_name+'" data-auth = "{{ Auth::user()->id }}" data-email="'+data.email+'"><span class="glyphicon glyphicon-envelope"></span> Chat!</a>';
                     }
 
-                    $('<tr id="user'+data.id+'" data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td>'+btnChat+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Update\' id=\'btn-actualizar\' name=\''+data.id+'\'/> </td><td>  <input type=\'button\' class =\'btn btn-danger\' value=\'Delete\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
+                    $('<tr id="user'+data.id+'" data-name="'+data.first_name+'" class="rows"><td class = "col_image" style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td class="col_firstname">'+data.first_name+'</td><td class="col_lastname">'+data.last_name+'</td><td class="col_email">'+data.email+'</td><td class="col_country"><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td class="col_chat">'+btnChat+'</td><td class="col_update"><input type=\'button\' class =\'btn btn-warning\' value=\'Update\' id=\'btn-actualizar\' name=\''+data.id+'\'/> </td><td class="col_delete">  <input type=\'button\' class =\'btn btn-danger\' value=\'Delete\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
                     $('#txtInputFirstName').val('');
                     $('#txtInputLastName').val('');
                     $('#txtInputEmail1').val('');
@@ -206,7 +206,7 @@ $(document).ready(function () {
                     } else{
                         btnChat = '<a href="javascript:void(0)" class="btn btn-info btn-chat" name="{{$user->id}}-{{$user->first_name}}" data-auth = "{{ Auth::user()->id }}" data-email="{{$user->email}}"><span class="glyphicon glyphicon-envelope"></span> Chat!</a>';
                     }
-				$('#user'+id_act).replaceWith('<tr id="user'+id_act+'" data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td>'+btnChat+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Update\' id=\'btn-actualizar\' name=\''+id_act+'\'/> </td><td>  <input type=\'button\' class =\'btn btn-danger\' value=\'Delete\' id=\'btn-borrar\' name=\''+id_act+'\'/></td>   <tr>');
+				$('#user'+id_act).replaceWith('<tr id="user'+id_act+'" data-name="'+data.first_name+'" class="rows"><td class = "col_image" style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td class="col_firstname">'+data.first_name+'</td><td class="col_lastname">'+data.last_name+'</td><td class="col_email">'+data.email+'</td><td class="col_country"><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td class="col_chat">'+btnChat+'</td><td class="col_update"><input type=\'button\' class =\'btn btn-warning\' value=\'Update\' id=\'btn-actualizar\' name=\''+id_act+'\'/> </td><td class="col_delete">  <input type=\'button\' class =\'btn btn-danger\' value=\'Delete\' id=\'btn-borrar\' name=\''+id_act+'\'/></td>   <tr>');
                 alert("Usuario actualizado!");
                 $('#modal-up-user').modal('toggle');
 	       		console.log(datos);
@@ -411,10 +411,10 @@ $(document).ready(function () {
         } else{
             room += String(auth)+'_'+String(receiver);
         }
-        var html = '<li class="dropdown" style="display :inline-flex;">'
-                  +'<a href="javascript:void(0)" data-toggle="dropdown" class="a_chat" id="a_'+room+'"><span class="glyphicon glyphicon-user"></span>'+array[1]+' </a> <button type="button" class="btn btn-default bnt_close_chat" data-room="'+room+'"><span class="glyphicon glyphicon-remove"></span> </button>'
+        var html = '<li class="dropdown" style="display :inline-flex;" data-room="'+room+'">'
+                  +'<a href="javascript:void(0)" class="a_chat" id="a_'+room+'" data-room="'+room+'"><span class="glyphicon glyphicon-user"></span>'+array[1]+' </a> <button type="button" class="btn btn-default bnt_close_chat" data-room="'+room+'"><span class="glyphicon glyphicon-remove"></span> </button>'
                   +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; background-color:white; border-color: #8e44ad; padding-top:0px">'
-                  +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ array[1] +' </div>'
+                  +'<div style="color: white; background-color: #337ab7; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ array[1] + '<a href="javascript:void(0)" class="btn btn-xs btn-primary clr_chat" style="border:none; position:absolute; right:35px"><span class="glyphicon glyphicon-floppy-remove"></span> Clear chat</a>' + '<a href="javascript:void(0)" class="btn btn-xs btn-primary btnclose" style="border:none; position:absolute; right:10px"><span class="glyphicon glyphicon-remove-sign"></span></a>'+ ' </div>'
                   + '<div>'
                   + '<ul style="overflow: auto; height : 320px; padding : 0px;" id="'+room+'" class="messages_list">'
                   + '</ul>'
@@ -447,19 +447,21 @@ $(document).ready(function () {
                 data : { room : room },
                 type : 'GET',
                 success : function(data){
-                    var obj = jQuery.parseJSON(data);
-
-                    $.each(obj, function(index, value){
-                        console.log(index, value.message );
-                        if(auth==value.user_id){
-                            style = style_local;
-                            userOnChat = 'Me: ';
-                        } else {
-                            style = style_away;
-                            userOnChat = value.user + ' says: ';
-                        }
-                        $("#"+room).append('<div data-userid = "'+value.user_id+'" data-time="'+index+'" data-user="'+value.user+'" data-message="'+value.message+'" style="'+style+'">'+ index + ' <b>' + userOnChat + '</b>'+value.message+'</div>');
-                    });
+                    if(data!=''){
+                        var obj = jQuery.parseJSON(data);
+                    
+                        $.each(obj, function(index, value){
+                            console.log(index, value.message );
+                            if(auth==value.user_id){
+                                style = style_local;
+                                userOnChat = 'Me: ';
+                            } else {
+                                style = style_away;
+                                userOnChat = value.user + ' says: ';
+                            }
+                            $("#"+room).append('<div data-userid = "'+value.user_id+'" data-time="'+index+'" data-user="'+value.user+'" data-message="'+value.message+'" style="'+style+'">'+ index + ' <b>' + userOnChat + '</b>'+value.message+'</div>');
+                        });
+                    }
                 }, 
                 error : function(data){
 
@@ -534,10 +536,10 @@ $(document).ready(function () {
         var room = data.room;
         var receiver = data.emitter;
         var auth = $('#user_iden').val();
-        var html = '<li class="dropdown" style="display :inline-flex;">'
-                 +'<a href="javascript:void(0)" data-toggle="dropdown" class="a_chat" id="a_'+room+'"><span class="glyphicon glyphicon-user"></span>'+data.emitter_name+' </a> <button type="button" class="btn btn-default bnt_close_chat" data-room="'+room+'"><span class="glyphicon glyphicon-remove"></span> </button>'
+        var html = '<li class="dropdown" style="display :inline-flex;" data-room="'+room+'">'
+                 +'<a href="javascript:void(0)" class="a_chat" id="a_'+room+'" data-room="'+room+'"><span class="glyphicon glyphicon-user"></span>'+data.emitter_name+' </a> <button type="button" class="btn btn-default bnt_close_chat" data-room="'+room+'"><span class="glyphicon glyphicon-remove"></span> </button>'
                  +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; background-color:white; border-color: #8e44ad; padding-top:0px">'
-                 +'<div style="background-color: steelblue; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ data.emitter_name +' </div>'
+                 +'<div style="color: white; background-color: #337ab7; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ data.emitter_name +  '<a href="javascript:void(0)" class="btn btn-xs btn-primary clr_chat" style="border:none; position:absolute; right:35px"><span class="glyphicon glyphicon-floppy-remove"></span> Clear chat</a>' + '<a href="javascript:void(0)" class="btn btn-xs btn-primary btnclose" style="border:none; position:absolute; right:10px"><span class="glyphicon glyphicon-remove-sign"></span></a>' +' </div>'
                  + '<div>'
                  + '<ul style="overflow: auto; height : 320px; padding : 0px;" id="'+room+'" class="messages_list">'
                  + '</ul>'
@@ -639,12 +641,52 @@ $(document).ready(function () {
          
 
     });
+
+    $('#chat').on('click', '.btn.btn-xs.btn-primary.btnclose', function(){
+        $(this).parent().parent().parent().removeClass('open');
+    });
     
+    socket.on('delete.chat', function(data){
+        $('#'+data.room).empty();
+    });
+    $('#chat').on('click', '.btn.btn-xs.btn-primary.clr_chat', function(){
+        var room = $(this).parent().parent().parent().data('room');
+        $.ajax({
+            url : 'clearChat',
+            type : 'GET',
+            data : { room : room },
+            success : function(data){
+                socket.emit('clear.chat', room);
+            },
+            error : function(data){
+
+            }
+        });
+
+    });
+
+    $('body').on('click', function (e) {
+        if (!$('.dropdown').is(e.target) && $('.dropdown').has(e.target).length === 0 && $('.open').has(e.target).length === 0) {
+            $('.dropdown').removeClass('open');
+        }
+    });    
 
     $('#chat').on('click', '.a_chat', function(){
         
+        $(this).parent().toggleClass("open");
         var room = $(this).parent().find('.messages_list').attr('id');
+        var a_room = $(this).data('room');
+
         
+        //Close te others....
+        $(this).parent().parent().find('.dropdown').each(function(){
+            if($(this).data('room') != a_room){
+                $(this).removeClass('open');
+            } 
+        });
+
+        //-----------------
+
         $(this).parent().css('background-color', 'transparent');
         delay(function(){
           

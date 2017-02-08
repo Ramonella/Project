@@ -223,3 +223,117 @@
         min-width: 500px;
     }
 }
+
+@media all and (min-width: 489px) and (max-width: 705px) {
+    .head_image{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse; 
+
+    }
+    #id_tbody .col_image{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;       
+    }
+    .head_lastname{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse; 
+
+    }
+    #id_tbody .col_lastname{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;       
+    }
+    .head_country{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse; 
+
+    }
+    #id_tbody .col_country{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;       
+    }
+}
+
+@media all and (min-width: 300px) and (max-width: 488px) {
+    .head_image{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse; 
+
+    }
+    #id_tbody .col_image{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;       
+    }
+    .head_lastname{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse; 
+
+    }
+    #id_tbody .col_lastname{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;       
+    }
+    .head_country{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse; 
+
+    }
+    #id_tbody .col_country{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;       
+    }
+    .head_email{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;
+        word-wrap: break-word;
+
+    }
+    #id_tbody .col_email{
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;
+        word-wrap: break-word;
+      
+    }
+}
