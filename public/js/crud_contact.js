@@ -535,11 +535,22 @@ $(document).ready(function () {
     socket.on('new.message', function(data){
         var room = data.room;
         var receiver = data.emitter;
+        var btnAdd = '';
+        var jsonObj = {};
+        var name_ = '';
+        var email_ = '';
+        if(!isContact(data.emitter)){
+            //Is not a contact
+            btnAdd = '<a href="javascript:void(0)" data-target="#modal-nuevo-user" class="btn btn-xs btn-primary add_contact" style="border:none; position:absolute; right:150px"><span class="glyphicon glyphicon-user"></span> Add contact</a>';
+            var obj = jQuery.parseJSON(getUser(data.emitter));
+            $('#txtInputFirstName').val(obj.name);
+            $('#txtInputEmail1').val(obj.email);
+        } 
         var auth = $('#user_iden').val();
         var html = '<li class="dropdown" style="display :inline-flex;" data-room="'+room+'">'
                  +'<a href="javascript:void(0)" class="a_chat" id="a_'+room+'" data-room="'+room+'"><span class="glyphicon glyphicon-user"></span>'+data.emitter_name+' </a> <button type="button" class="btn btn-default bnt_close_chat" data-room="'+room+'"><span class="glyphicon glyphicon-remove"></span> </button>'
                  +'<div class="dropdown-menu" role="menu" style="width : 350px; height: 450px; background-color:white; border-color: #8e44ad; padding-top:0px">'
-                 +'<div style="color: white; background-color: #337ab7; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ data.emitter_name +  '<a href="javascript:void(0)" class="btn btn-xs btn-primary clr_chat" style="border:none; position:absolute; right:35px"><span class="glyphicon glyphicon-floppy-remove"></span> Clear chat</a>' + '<a href="javascript:void(0)" class="btn btn-xs btn-primary btnclose" style="border:none; position:absolute; right:10px"><span class="glyphicon glyphicon-remove-sign"></span></a>' +' </div>'
+                 +'<div style="color: white; background-color: #337ab7; padding-top: 30px;  padding: 0 15px;  margin: 0  0 10px;" >'+ data.emitter_name + btnAdd +'<a href="javascript:void(0)" class="btn btn-xs btn-primary clr_chat" style="border:none; position:absolute; right:35px"><span class="glyphicon glyphicon-floppy-remove"></span> Clear chat</a>' + '<a href="javascript:void(0)" class="btn btn-xs btn-primary btnclose" style="border:none; position:absolute; right:10px"><span class="glyphicon glyphicon-remove-sign"></span></a>' +' </div>'
                  + '<div>'
                  + '<ul style="overflow: auto; height : 320px; padding : 0px;" id="'+room+'" class="messages_list">'
                  + '</ul>'
@@ -640,6 +651,11 @@ $(document).ready(function () {
          saveChat(data.room);
          
 
+    });
+
+    $('#chat').on('click', '.btn.btn-xs.btn-primary.add_contact', function(){
+        $('#diverr').hide();
+        $('#modal-nuevo-user').modal('toggle'); 
     });
 
     $('#chat').on('click', '.btn.btn-xs.btn-primary.btnclose', function(){
@@ -750,6 +766,41 @@ $(document).ready(function () {
         } 
     });
 
-    
+    function isContact(emitter){
+        var res = 1;
+        $.ajax({
+            url : 'isContact',
+            type : 'GET',
+            data : { id_sender : emitter},
+            async : false,
+            success : function(data){
+                if(data == 0){
+                    res = 0;
+                }  
+
+            },
+             error : function(data){
+                console.log('Error');
+            }
+        });
+        return res;
+    }
+    function getUser(id){
+        var jsonObj = {};
+        $.ajax({
+            url : 'getUser',
+            type : 'GET',
+            data : {id : id},
+            async : false,
+            success : function(data){
+                jsonObj = data;
+            },
+            error : function(data){
+
+            }
+        });
+        return jsonObj;
+    }
+
 
 });

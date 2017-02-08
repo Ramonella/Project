@@ -19,6 +19,8 @@ Route::get('add', 'MainController@store');
 
 Route::get('getContact', 'MainController@getContact');
 
+Route::get('getUser', 'MainController@getUser');
+
 Route::get('update', 'MainController@update');
 
 Route::get('delete', 'MainController@delete');
@@ -65,4 +67,6 @@ Route::get('isUser', function(Request $request){
 });
 
 Route::get('clearChat', 'ChatController@clearChat');
+
+Route::get('isContact', 'MainController@isContact');
 

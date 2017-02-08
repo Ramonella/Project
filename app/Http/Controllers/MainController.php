@@ -58,6 +58,10 @@ class MainController extends Controller
         $contact = Contact::find($request->input('id'));
         return $contact->toJson();
     }
+    public function getUser(Request $request){
+        $user = User::find($request->input('id'));
+        return $user->toJson();
+    }
 
     public function update(Request $request){
         $contact = Contact::find($request->input('id'));
@@ -205,6 +209,21 @@ class MainController extends Controller
     public function readConuntries(){
 
         return File::get(storage_path('all.json'));
+    }
+
+    public function isContact(Request $request){
+        $id = Auth::user()->id;
+        $id_sender = $request->input('id_sender');
+
+        $result = Contact::where('id', $id_sender)
+                         ->where('user_id', $id)
+                         ->get();
+        $count = $result->count();
+        if($count > 0){
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
 }
