@@ -1,6 +1,7 @@
 $(document).ready(function () {
     var id_act;
-    var socket = io.connect('http://173.255.202.198:3000');
+    //var socket = io.connect('http://173.255.202.198:3000');
+    var socket = io.connect('http://127.0.0.1:3000');
 
     socket.emit('room_default', $('#user_iden').val());
 
@@ -141,7 +142,7 @@ $(document).ready(function () {
                     if(isUser == 1){
                         btnChat = '<a href="#" class="btn btn-primary btn-invite"><span class="glyphicon glyphicon-plus"></span> Invite</a>';
                     } else{
-                        btnChat = '<a href="javascript:void(0)" class="btn btn-info btn-chat" name="{{$user->id}}-{{$user->first_name}}" data-auth = "{{ Auth::user()->id }}" data-email="{{$user->email}}"><span class="glyphicon glyphicon-envelope"></span> Chat!</a>';
+                        btnChat = '<a href="javascript:void(0)" class="btn btn-info btn-chat" name="'+data.id+'-'+data.first_name+'" data-auth = "{{ Auth::user()->id }}" data-email="'+data.email+'"><span class="glyphicon glyphicon-envelope"></span> Chat!</a>';
                     }
 
                     $('<tr id="user'+data.id+'" data-name="'+data.first_name+'" class="rows"><td style="padding:15px 0px 15px 0px;"><a href="javascript:void(0)" name="'+data.id+'"" id="btn-detalle"><img src="images/'+data.image+'" class="img-responsive voc_list_preview_img" alt="" title="" ></a></td><td>'+data.first_name+'</td><td>'+data.last_name+'</td><td>'+data.email+'</td><td><a href="javascript:void(0)" class="country" name="'+data.id+' id="country" data-latlng="'+data.latlng+'">'+data.country_name+'</a></td><td>'+btnChat+'</td><td><input type=\'button\' class =\'btn btn-warning\' value=\'Update\' id=\'btn-actualizar\' name=\''+data.id+'\'/> </td><td>  <input type=\'button\' class =\'btn btn-danger\' value=\'Delete\' id=\'btn-borrar\' name=\''+data.id+'\'/></td>   <tr>').appendTo('#lista');
@@ -383,7 +384,7 @@ $(document).ready(function () {
 
         var array = name.split('-');
 
-        var auth = parseInt($(this).data('auth'));
+        var auth = parseInt($('#user_iden').val());
 
         var email = $(this).data('email');
 
